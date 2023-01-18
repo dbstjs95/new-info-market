@@ -1,12 +1,12 @@
-const Admin = require("../models/admin");
+const { Admin } = require("../models");
 
-export async function findAdminByPK(adminId) {
+async function findAdminByPK(adminId) {
   return await Admin.findOne({
     where: { id: adminId },
   });
 }
 
-export async function findAdmin(email) {
+async function findAdmin(email) {
   return await Admin.findOne({
     where: {
       email,
@@ -14,9 +14,11 @@ export async function findAdmin(email) {
   });
 }
 
-export async function createAdmin(email, hashPw) {
+async function createAdmin(email, hashPw) {
   return await Admin.create({
     email,
     password: hashPw,
   });
 }
+
+module.exports = { findAdminByPK, findAdmin, createAdmin };

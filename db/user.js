@@ -1,6 +1,6 @@
-const User = require("../models/user");
+const { User } = require("../models");
 
-export async function createUser(email, hashPw, nickname, phone) {
+async function createUser(email, hashPw, nickname, phone) {
   return await User.create({
     email,
     password: hashPw,
@@ -9,7 +9,7 @@ export async function createUser(email, hashPw, nickname, phone) {
   });
 }
 
-export async function findUsers(pages, limit) {
+async function findUsers(pages, limit) {
   return await User.findAndCountAll({
     order: [["createdAt", "desc"]],
     limit,
@@ -17,7 +17,7 @@ export async function findUsers(pages, limit) {
   });
 }
 
-export async function findUser(email) {
+async function findUser(email) {
   return await User.findOne({
     where: {
       email,
@@ -25,7 +25,7 @@ export async function findUser(email) {
   });
 }
 
-export async function editUserEmail(userId, email) {
+async function editUserEmail(userId, email) {
   return await User.update(
     {
       email,
@@ -38,7 +38,7 @@ export async function editUserEmail(userId, email) {
   );
 }
 
-export async function editUserNickname(userId, nickname) {
+async function editUserNickname(userId, nickname) {
   return await User.update(
     {
       nickname,
@@ -50,7 +50,7 @@ export async function editUserNickname(userId, nickname) {
     }
   );
 }
-export async function editUserPhone(userId, phone) {
+async function editUserPhone(userId, phone) {
   return await User.update(
     {
       phone,
@@ -62,7 +62,7 @@ export async function editUserPhone(userId, phone) {
     }
   );
 }
-export async function editUserPassword(userId, hashPw) {
+async function editUserPassword(userId, hashPw) {
   return await User.update(
     {
       password: hashPw,
@@ -75,7 +75,7 @@ export async function editUserPassword(userId, hashPw) {
   );
 }
 
-export async function editUserInfo(userId, email, hashPw, nickname, phone) {
+async function editUserInfo(userId, email, hashPw, nickname, phone) {
   return await User.update(
     {
       email,
@@ -90,7 +90,7 @@ export async function editUserInfo(userId, email, hashPw, nickname, phone) {
     }
   );
 }
-export async function AdminEditUserInfo(userId, email, nickname, point, grade) {
+async function AdminEditUserInfo(userId, email, nickname, point, grade) {
   return await User.update(
     {
       email,
@@ -106,7 +106,7 @@ export async function AdminEditUserInfo(userId, email, nickname, point, grade) {
   );
 }
 
-export async function removeUser(userId) {
+async function removeUser(userId) {
   return await User.destroy({
     where: {
       id: userId,
@@ -114,13 +114,13 @@ export async function removeUser(userId) {
   });
 }
 
-export async function findPkUser(userId) {
+async function findPkUser(userId) {
   return await User.findOne({
     where: { id: userId },
   });
 }
 
-export async function editUserPoint(userId, point) {
+async function editUserPoint(userId, point) {
   return await User.update(
     { point },
     {
@@ -131,7 +131,7 @@ export async function editUserPoint(userId, point) {
   );
 }
 
-export async function checkNickname(nickname) {
+async function checkNickname(nickname) {
   return await User.findOne({
     where: {
       nickname,
@@ -139,7 +139,7 @@ export async function checkNickname(nickname) {
   });
 }
 
-export async function postImg(img, userId) {
+async function postImg(img, userId) {
   return await User.update(
     { img },
     {
@@ -149,3 +149,20 @@ export async function postImg(img, userId) {
     }
   );
 }
+
+module.exports = {
+  createUser,
+  findUsers,
+  findUser,
+  editUserEmail,
+  editUserNickname,
+  editUserPhone,
+  editUserPassword,
+  editUserInfo,
+  AdminEditUserInfo,
+  removeUser,
+  findPkUser,
+  editUserPoint,
+  checkNickname,
+  postImg,
+};

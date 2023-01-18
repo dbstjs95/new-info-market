@@ -1,9 +1,8 @@
 const { Sequelize, Op } = require("sequelize");
 
-const Info = require("../models/info");
-const User = require("../models/user");
+const { Info, User } = require("../models");
 
-export async function searchByTitle(titles, pages, limit, info_type) {
+async function searchByTitle(titles, pages, limit, info_type) {
   return await Info.findAndCountAll({
     order: [["createdAt", "desc"]],
     where: {
@@ -37,7 +36,7 @@ export async function searchByTitle(titles, pages, limit, info_type) {
   });
 }
 
-export async function searchByContent(content, pages, limit, info_type) {
+async function searchByContent(content, pages, limit, info_type) {
   return await Info.findAndCountAll({
     order: [["createdAt", "desc"]],
     where: {
@@ -71,7 +70,7 @@ export async function searchByContent(content, pages, limit, info_type) {
   });
 }
 
-export async function searchAllTitle(titles, pages, limit) {
+async function searchAllTitle(titles, pages, limit) {
   return await Info.findAndCountAll({
     order: [["createdAt", "desc"]],
     where: {
@@ -104,7 +103,7 @@ export async function searchAllTitle(titles, pages, limit) {
   });
 }
 
-export async function searchAllContent(content, pages, limit) {
+async function searchAllContent(content, pages, limit) {
   return await Info.findAndCountAll({
     order: [["createdAt", "desc"]],
     where: {
@@ -137,7 +136,7 @@ export async function searchAllContent(content, pages, limit) {
   });
 }
 
-export async function searchByNick(Nickname, pages, limit, info_type) {
+async function searchByNick(Nickname, pages, limit, info_type) {
   return await Info.findAndCountAll({
     order: [["createdAt", "desc"]],
     where: {
@@ -173,7 +172,7 @@ export async function searchByNick(Nickname, pages, limit, info_type) {
   });
 }
 
-export async function searchAllNick(nickname, pages, limit) {
+async function searchAllNick(nickname, pages, limit) {
   return await Info.findAndCountAll({
     order: [["createdAt", "desc"]],
     limit,
@@ -207,3 +206,12 @@ export async function searchAllNick(nickname, pages, limit) {
     ],
   });
 }
+
+module.exports = {
+  searchByTitle,
+  searchByContent,
+  searchAllTitle,
+  searchAllContent,
+  searchByNick,
+  searchAllNick,
+};

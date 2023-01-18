@@ -1,8 +1,7 @@
-const Point = require("../models/point");
+const { Point, User } = require("../models");
 const { Sequelize, Op, where } = require("sequelize");
-const User = require("../models/user");
 
-export async function createPoint(
+async function createPoint(
   imp_uid,
   state,
   userId,
@@ -20,7 +19,7 @@ export async function createPoint(
   });
 }
 
-export async function findUserChargePoint(userId, merchant_uid) {
+async function findUserChargePoint(userId, merchant_uid) {
   return await Point.findOne({
     where: {
       userId,
@@ -44,7 +43,7 @@ export async function findUserChargePoint(userId, merchant_uid) {
   });
 }
 
-export async function editPoint(tid) {
+async function editPoint(tid) {
   return await Point.update(
     {
       state: "approve",
@@ -57,7 +56,7 @@ export async function editPoint(tid) {
   );
 }
 
-export async function removePoint(userId, merchant_uid, imp_uid) {
+async function removePoint(userId, merchant_uid, imp_uid) {
   return await Point.destroy({
     where: {
       userId,
@@ -67,12 +66,7 @@ export async function removePoint(userId, merchant_uid, imp_uid) {
   });
 }
 
-export async function partPointRefund(
-  userId,
-  merchant_uid,
-  imp_uid,
-  cancel_point
-) {
+async function partPointRefund(userId, merchant_uid, imp_uid, cancel_point) {
   return await Point.update(
     {
       point: cancel_point,
@@ -87,7 +81,7 @@ export async function partPointRefund(
   );
 }
 
-// export async function findAndUpdate(
+// async function findAndUpdate(
 //   imp_uid,
 //   state,
 //   userId,
@@ -101,7 +95,7 @@ export async function partPointRefund(
 //   });
 // }
 
-export async function findUserPaidbyUserId(userId) {
+async function findUserPaidbyUserId(userId) {
   return await Point.findAll({
     where: {
       userId,
@@ -122,3 +116,12 @@ export async function findUserPaidbyUserId(userId) {
     },
   });
 }
+
+module.exports = {
+  createPoint,
+  findUserChargePoint,
+  editPoint,
+  removePoint,
+  partPointRefund,
+  findUserPaidbyUserId,
+};

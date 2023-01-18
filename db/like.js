@@ -1,20 +1,22 @@
-const Like = require("../models/like");
+const { Like } = require("../models");
 
-export async function likeClick(userId, infoId) {
+async function likeClick(userId, infoId) {
   return await Like.create({
     userId,
     infoId,
   });
 }
 
-export async function likeClickCancel(userId, infoId) {
+async function likeClickCancel(userId, infoId) {
   return await Like.destroy({
     where: { userId, infoId },
   });
 }
 
-export async function findUser(userId, infoId) {
+async function findUser(userId, infoId) {
   return await Like.findOne({
     where: { userId, infoId },
   });
 }
+
+module.exports = { likeClick, likeClickCancel, findUser };

@@ -4,9 +4,20 @@ const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const indexRouter = require("./routes");
 
+const { sequelize, User } = require("./models");
+
 const PORT = process.env.PORT || 80;
 
 const app = express();
+
+sequelize
+  .sync()
+  .then(() => {
+    console.log("데이터베이스 연결 성공");
+  })
+  .catch((err) => {
+    console.error(err);
+  });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -26,19 +37,10 @@ app.use(cookieParser());
 
 app.use("/", indexRouter);
 
-// 지원하지 않는 api
-app.use((req, res, next) => {
-  res.sendStatus(404);
-});
-
-// 서버 에러
-app.use((error, req, res, next) => {
-  console.error(error);
-  res.sendStatus(500);
-});
-
-app.get("/", (req, res) => {
-  console.log("서버 연결 성공");
+app.get("/test", async (req, res) => {
+  // console.log("서버 연결 성공");
+  let result = await User.findAll();
+  console.log("result: ", result);
   res.send("Welcome!");
 });
 

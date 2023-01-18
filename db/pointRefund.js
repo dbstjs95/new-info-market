@@ -1,9 +1,7 @@
-const Point = require("../models/point");
+const { Point, User, PointRefund } = require("../models");
 const { Sequelize, Op, where } = require("sequelize");
-const User = require("../models/user");
-const PointRefund = require("../models/pointRefund");
 
-export async function createPointRefund(
+async function createPointRefund(
   imp_uid,
   merchant_uid,
   userId,
@@ -21,10 +19,12 @@ export async function createPointRefund(
   });
 }
 
-export async function findRefund(userId) {
+async function findRefund(userId) {
   return await PointRefund.findAll({
     where: {
       userId,
     },
   });
 }
+
+module.exports = { createPointRefund, findRefund };

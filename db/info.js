@@ -1,10 +1,8 @@
 const { Sequelize, Op, where } = require("sequelize");
 
-const Reply = require("../models/reply");
-const Info = require("../models/info");
-const User = require("../models/user");
+const { Reply, Info, User } = require("../models");
 
-export async function getInfo(infoId) {
+async function getInfo(infoId) {
   return await Info.findOne({
     where: { id: infoId },
     attributes: [
@@ -39,7 +37,10 @@ export async function getInfo(infoId) {
   });
 }
 
-export async function getInfos() {
+async function getInfos() {
+  let result = await Info.findAll();
+  console.log("result: ", result);
+  return result;
   return await Info.findAll({
     order: [["totalLikes", "desc"]],
     limit: 10,
@@ -66,7 +67,7 @@ export async function getInfos() {
   });
 }
 
-export async function AdminGetInfo(pages, limit, activate) {
+async function AdminGetInfo(pages, limit, activate) {
   return await Info.findAndCountAll({
     order: [["createdAt", "desc"]],
     limit,
@@ -97,7 +98,7 @@ export async function AdminGetInfo(pages, limit, activate) {
   });
 }
 
-export async function getMyInfos(pages, limit, userId) {
+async function getMyInfos(pages, limit, userId) {
   return await Info.findAndCountAll({
     order: [["createdAt", "desc"]],
     limit,
@@ -128,7 +129,7 @@ export async function getMyInfos(pages, limit, userId) {
   });
 }
 
-export async function createInfo(
+async function createInfo(
   title,
   content,
   targetPoint,
@@ -148,13 +149,13 @@ export async function createInfo(
   });
 }
 
-export async function removeInfo(infoId) {
+async function removeInfo(infoId) {
   return await Info.destroy({
     where: { id: infoId },
   });
 }
 
-export async function BronzeEditInfo(infoId, title, content, file) {
+async function BronzeEditInfo(infoId, title, content, file) {
   return await Info.update(
     {
       title,
@@ -165,14 +166,7 @@ export async function BronzeEditInfo(infoId, title, content, file) {
   );
 }
 
-export async function SGEditInfo(
-  infoId,
-  title,
-  content,
-  targetPoint,
-  type,
-  file
-) {
+async function SGEditInfo(infoId, title, content, targetPoint, type, file) {
   return await Info.update(
     {
       title,
@@ -185,7 +179,7 @@ export async function SGEditInfo(
   );
 }
 
-export async function viewsAdd(infoId, views) {
+async function viewsAdd(infoId, views) {
   return await Info.update(
     {
       totalViews: views + 1,
@@ -198,7 +192,7 @@ export async function viewsAdd(infoId, views) {
   );
 }
 
-export async function LikesAdd(infoId, likes) {
+async function LikesAdd(infoId, likes) {
   return await Info.update(
     {
       totalLikes: likes + 1,
@@ -211,7 +205,7 @@ export async function LikesAdd(infoId, likes) {
   );
 }
 
-export async function LikesSub(infoId, likes) {
+async function LikesSub(infoId, likes) {
   return await Info.update(
     {
       totalLikes: likes - 1,
@@ -224,7 +218,7 @@ export async function LikesSub(infoId, likes) {
   );
 }
 
-export async function adminEditInfo(
+async function adminEditInfo(
   infoId,
   title,
   content,
@@ -248,7 +242,7 @@ export async function adminEditInfo(
   );
 }
 
-export async function activateInfo(activate, infoId) {
+async function activateInfo(activate, infoId) {
   return await Info.update(
     {
       activate,
@@ -261,7 +255,7 @@ export async function activateInfo(activate, infoId) {
   );
 }
 
-export async function editInfoFile(infoId, file) {
+async function editInfoFile(infoId, file) {
   return await Info.update(
     {
       file,
@@ -274,7 +268,7 @@ export async function editInfoFile(infoId, file) {
   );
 }
 
-export async function findFreeInfo(pages, limit, like, cursor) {
+async function findFreeInfo(pages, limit, like, cursor) {
   return await Info.findAndCountAll({
     order: [
       ["createdAt", "desc"],
@@ -309,7 +303,7 @@ export async function findFreeInfo(pages, limit, like, cursor) {
   });
 }
 
-export async function findPaidInfo(pages, limit, like_type, activate, cursor) {
+async function findPaidInfo(pages, limit, like_type, activate, cursor) {
   return await Info.findAndCountAll({
     order: [
       ["createdAt", "desc"],
@@ -344,7 +338,7 @@ export async function findPaidInfo(pages, limit, like_type, activate, cursor) {
   });
 }
 
-export async function recentInfo(pages, limit, type) {
+async function recentInfo(pages, limit, type) {
   return await Info.findAndCountAll({
     order: [["createdAt", "desc"]],
     limit,
@@ -375,7 +369,7 @@ export async function recentInfo(pages, limit, type) {
   });
 }
 
-export async function likeInfo(pages, limit, like, type) {
+async function likeInfo(pages, limit, like, type) {
   return await Info.findAndCountAll({
     order: [["totalLikes", like]],
     limit,
@@ -405,3 +399,24 @@ export async function likeInfo(pages, limit, like, type) {
     },
   });
 }
+
+module.exports = {
+  getInfo,
+  getInfos,
+  AdminGetInfo,
+  getMyInfos,
+  createInfo,
+  removeInfo,
+  BronzeEditInfo,
+  SGEditInfo,
+  viewsAdd,
+  LikesAdd,
+  LikesSub,
+  adminEditInfo,
+  activateInfo,
+  editInfoFile,
+  findFreeInfo,
+  findPaidInfo,
+  recentInfo,
+  likeInfo,
+};

@@ -1,9 +1,7 @@
-const Payment = require("../models/payment");
+const { Payment, User, Info } = require("../models");
 const { Sequelize, Op } = require("sequelize");
-const User = require("../models/user");
-const Info = require("../models/info");
 
-export async function createPayment(userId, infoId, state, tid) {
+async function createPayment(userId, infoId, state, tid) {
   return await Payment.create({
     userId,
     infoId,
@@ -12,7 +10,7 @@ export async function createPayment(userId, infoId, state, tid) {
   });
 }
 
-export async function getPayment(infoId) {
+async function getPayment(infoId) {
   return await Payment.findOne({
     where: {
       id: infoId,
@@ -42,7 +40,7 @@ export async function getPayment(infoId) {
   });
 }
 
-export async function refundPayment(tid) {
+async function refundPayment(tid) {
   return await Payment.update(
     {
       state: "refund",
@@ -55,7 +53,7 @@ export async function refundPayment(tid) {
   );
 }
 
-export async function getPayments(userId, pages, limit, state) {
+async function getPayments(userId, pages, limit, state) {
   return await Payment.findAndCountAll({
     where: {
       id: userId,
@@ -91,7 +89,7 @@ export async function getPayments(userId, pages, limit, state) {
   });
 }
 
-export async function getUserPayment(infoId, userId) {
+async function getUserPayment(infoId, userId) {
   return await Payment.findOne({
     where: {
       userId,
@@ -99,3 +97,11 @@ export async function getUserPayment(infoId, userId) {
     },
   });
 }
+
+module.exports = {
+  createPayment,
+  getPayment,
+  refundPayment,
+  getPayments,
+  getUserPayment,
+};

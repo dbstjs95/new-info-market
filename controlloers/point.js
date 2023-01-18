@@ -1,20 +1,21 @@
+require("dotenv").config();
 const pointDb = require("../db/point");
 const axios = require("axios");
-const { config } = require("../config");
+
 const userDb = require("../db/user");
 const pointRefundDb = require("../db/pointRefund");
 
 module.exports = {
   getToken: async (req, res) => {
     return res.status(200).json({
-      imp_cid: config.imp.imp_cid,
-      imp_code: config.imp.imp_code,
+      imp_cid: process.env.IMP_CID,
+      imp_code: process.env.IMP_CODE,
       message: "cid와 secret code 입니다.",
     });
   },
   approve: async (req, res) => {
-    const imp_key = config.imp.imp_key;
-    const imp_secret = config.imp.imp_secret;
+    const imp_key = process.env.IMP_KEY;
+    const imp_secret = process.env.IMP_SECRET;
     const url = "https://api.iamport.kr/users/getToken";
     const { userId } = req;
 
@@ -103,9 +104,9 @@ module.exports = {
     }
   },
   cancel: async (req, res) => {
-    const imp_key = config.imp.imp_key;
+    const imp_key = process.env.IMP_KEY;
 
-    const imp_secret = config.imp.imp_secret;
+    const imp_secret = process.env.IMP_SECRET;
     const url = "https://api.iamport.kr/users/getToken";
     const { userId } = req;
 

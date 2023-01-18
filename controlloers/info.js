@@ -1,4 +1,3 @@
-const Info = require("../models/info");
 const infoDb = require("../db/info");
 const paymentDb = require("../db/payment");
 const likeDb = require("../db/like");
@@ -171,6 +170,7 @@ module.exports = {
       message: `인기 게시물들을 가져왔습니다.`,
     });
   },
+
   editFile: async (req, res) => {
     const { infoId } = req.params;
     const { userId } = req;

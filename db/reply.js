@@ -1,6 +1,6 @@
-const Reply = require("../models/reply");
+const { Reply } = require("../models");
 
-export async function writeReply(content, userId, infoId) {
+async function writeReply(content, userId, infoId) {
   return await Reply.create({
     content,
     userId,
@@ -8,7 +8,7 @@ export async function writeReply(content, userId, infoId) {
   });
 }
 
-export async function modifyReply(content, userId, infoId, replyId) {
+async function modifyReply(content, userId, infoId, replyId) {
   return await Reply.update(
     {
       content,
@@ -19,14 +19,16 @@ export async function modifyReply(content, userId, infoId, replyId) {
   );
 }
 
-export async function deleteReply(replyId) {
+async function deleteReply(replyId) {
   return await Reply.destroy({
     where: { id: replyId },
   });
 }
 
-export async function getReply(replyId) {
+async function getReply(replyId) {
   return await Reply.findOne({
     where: { id: replyId },
   });
 }
+
+module.exports = { writeReply, modifyReply, deleteReply, getReply };

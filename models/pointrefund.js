@@ -3,7 +3,7 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class PointRefund extends Model {
     static associate(models) {
-      PointRefund.belongsto(models.User, {
+      PointRefund.belongsTo(models.User, {
         foreignKey: "userId",
         targetKey: "id",
         onDelete: "CASCADE",
@@ -63,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: true,
       underscored: false,
       modelName: "PointRefund",
-      tableName: "PointRefund",
+      // tableName: "PointRefund",
       paranoid: true,
       // mb4 -> 이모티콘도 사용 가능
       charset: "utf8",
