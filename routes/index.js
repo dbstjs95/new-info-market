@@ -1,7 +1,6 @@
 const router = require("express").Router();
 
 // const authRouter = require("./auth");
-// const adminRouter = require("./admin");
 // const infoRouter = require("./info");
 // const searchRouter = require("./search");
 // const usersRouter = require("./users");
