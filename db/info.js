@@ -38,9 +38,6 @@ async function getInfo(infoId) {
 }
 
 async function getInfos() {
-  let result = await Info.findAll();
-  console.log("result: ", result);
-  return result;
   return await Info.findAll({
     order: [["totalLikes", "desc"]],
     limit: 10,

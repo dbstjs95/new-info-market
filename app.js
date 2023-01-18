@@ -4,7 +4,7 @@ const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const indexRouter = require("./routes");
 
-const { sequelize, User } = require("./models");
+const { sequelize } = require("./models");
 
 const PORT = process.env.PORT || 80;
 
@@ -37,10 +37,8 @@ app.use(cookieParser());
 
 app.use("/", indexRouter);
 
-app.get("/test", async (req, res) => {
-  // console.log("서버 연결 성공");
-  let result = await User.findAll();
-  console.log("result: ", result);
+app.get("/", async (req, res) => {
+  console.log("서버 연결 성공");
   res.send("Welcome!");
 });
 

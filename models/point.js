@@ -54,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: true,
       underscored: false,
       modelName: "Point",
-      // tableName: "Point",
+      tableName: "Point",
       paranoid: true,
       // mb4 -> 이모티콘도 사용 가능
       charset: "utf8",
