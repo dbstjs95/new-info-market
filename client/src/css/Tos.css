@@ -1,0 +1,35 @@
+.termsContainer {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute; 
+  
+  top: 50%; 
+  left: 50%; 
+  width: 50%; 
+  height: 50%; 
+  text-align: center;
+  background-color: rgb(255, 255, 255); 
+  border-radius: 10px; 
+  transform: translateX(-50%) translateY(-50%);
+}
+.term-div {
+  display: -webkit-inline-box;
+  margin-top: 4%;
+}
+.term-div1 {
+  display: -webkit-inline-box;
+  margin-top: 4%;
+}
+.term-div2 {
+  display: -webkit-inline-box;
+  margin-top: 4%;
+}
+.sign-button {
+  margin-top: 4%;
+}
+
+textarea {
+  height: 6.25em;
+  width: 50%;
+}
