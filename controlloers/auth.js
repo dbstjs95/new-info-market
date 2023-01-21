@@ -8,7 +8,7 @@ const {
 module.exports = {
   signup: async (req, res) => {
     const { email, password, nickname, phone } = req.body;
-    console.log(req.body);
+
     const exUser = await userDb.findUser(email);
 
     if (exUser) {
@@ -24,8 +24,6 @@ module.exports = {
     const hashPw = await bcrypt.hash(password).catch((err) => {
       console.log(err);
     });
-
-    // console.log(hashPw);
 
     const test = await userDb.createUser(email, hashPw, nickname, phone);
     // console.log(test);

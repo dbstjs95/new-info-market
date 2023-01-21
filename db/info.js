@@ -1,23 +1,25 @@
-const { Sequelize, Op, where } = require("sequelize");
+const { Sequelize, Op, fn, col } = require("sequelize");
 
 const { Reply, Info, User } = require("../models");
 
 async function getInfo(infoId) {
   return await Info.findOne({
     where: { id: infoId },
-    attributes: [
-      "id",
-      [Sequelize.col("User.nickname"), "nickname"],
-      "title",
-      "content",
-      "userId",
-      "createdAt",
-      "targetPoint",
-      "type",
-      "file",
-      "totalViews",
-      "totalLikes",
-    ],
+    attributes: {
+      include: [
+        "id",
+        [Sequelize.col("User.nickname"), "nickname"],
+        "title",
+        "content",
+        "userId",
+        [fn("DATE_FORMAT", col("User.createdAt"), "%Y-%m-%d"), "createdAt"],
+        "targetPoint",
+        "type",
+        "file",
+        "totalViews",
+        "totalLikes",
+      ],
+    },
     include: [
       {
         model: User,
@@ -25,7 +27,17 @@ async function getInfo(infoId) {
       },
       {
         model: Reply,
-        attributes: ["id", "userid", "content", "createdAt"],
+        attributes: {
+          include: [
+            "id",
+            "userid",
+            "content",
+            [
+              fn("DATE_FORMAT", col("Replies.createdAt"), "%Y-%m-%d %H:%i:%s"),
+              "createdAt",
+            ],
+          ],
+        },
         include: [
           {
             model: User,
