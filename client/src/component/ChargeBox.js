@@ -11,19 +11,16 @@ import Payment from './Payment';
 import axios from 'axios';
 
 const ChargeBoxContainer = styled.div`
-  height: 250px;
-  background-color: #f3f702;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
   align-items: center;
-  padding: 10px;
-  border-radius: 10px;
+  justify-content: center;
+  padding: 0px 30px;
   > p.header {
-    width: 80%;
     font-weight: bold;
     padding-bottom: 5px;
-    border-bottom: 1px solid black;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #555;
   }
   > input {
     font-size: 1rem;
@@ -37,24 +34,48 @@ const ChargeBoxContainer = styled.div`
     border-radius: 5px;
   }
   > p.standard {
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    color: crimson;
   }
 `;
 
 const PayBox = styled.div`
-  height: 150px;
-  border: 3px solid black;
+  /* height: 150px; */
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  padding: 10px;
-  border-radius: 10px;
-  > p {
-    margin: 0;
+  align-items: flex-start;
+  padding: 0 35px;
+  > span {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    color: #555;
   }
-  > div.btns button {
-    &:nth-child(1) {
-      margin-right: 10px;
+  > p {
+    line-height: 1.8rem;
+    font-weight: bold;
+    color: #333;
+    &:first-of-type {
+      text-decoration: crimson wavy underline;
+    }
+  }
+  > div.btns {
+    margin-top: 20px;
+    align-self: flex-end;
+    button {
+      font-weight: bold;
+      cursor: pointer;
+      border: 0;
+      color: white;
+      background-color: #ed0c2a;
+      padding: 2px;
+      &:nth-child(1) {
+        background-color: #3b3bcc;
+        margin-right: 20px;
+      }
+      &:hover {
+        box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.5);
+      }
     }
   }
 `;
@@ -111,6 +132,7 @@ export function PayWithPoints({ handleClick }) {
 
   return (
     <PayBox>
+      <span>현재 잔액: {point}</span>
       <p>{targetPoint} P가 차감됩니다.</p>
       <p>결제하시겠습니까?</p>
       <div className="btns">
@@ -143,9 +165,7 @@ export default function ChargeBox() {
           )
         }
       />
-      <p className="standard" style={{ color: 'red' }}>
-        3000원 이상부터 가능합니다.
-      </p>
+      <p className="standard">3000원 이상부터 가능합니다.</p>
       <Payment />
     </ChargeBoxContainer>
   );

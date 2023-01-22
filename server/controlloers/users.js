@@ -112,6 +112,8 @@ module.exports = {
       state
     );
 
+    console.log("findOrders: ", findOrders);
+
     if (findOrders.count === 0) {
       return res.status(400).json({ message: "구매한 게시물이 없습니다." });
     }

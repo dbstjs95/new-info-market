@@ -72,18 +72,28 @@ module.exports = {
       url: complete_url,
       method: "get",
       headers: { Authorization: imp_token },
-    }).catch((err) => {
-      console.log(err);
-    });
+    })
+      .then((res) => res.data)
+      .catch((err) => {
+        console.error(err);
+        return res
+          .status(500)
+          .json({
+            message: "iamport로부터 결제 정보를 받아오는 데 실패했습니다.",
+          });
+      });
 
-    const paymentData = getPaymentData.req.body;
+    const paymentData = getPaymentData?.response;
 
     const order = await pointDb.findUserChargePoint(
       Number(userId),
       paymentData.merchant_uid
     );
 
+    console.log("order: ", order);
+
     const amountToBePaid = order?.point;
+    console.log("order: ", amountToBePaid);
 
     const { amount, status } = paymentData;
 

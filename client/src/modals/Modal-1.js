@@ -18,10 +18,9 @@ const EntireContainer = styled.div`
   /* 모달 뒷배경 */
   background: rgba(0, 0, 0, 0.3);
   > div.content {
-    /* width: 50vw; */
     padding: 2em;
     border-radius: 7px;
-    background: white;
+    background: ${({ bg }) => bg || 'white'};
     position: relative;
     > span {
       font-size: 1.5rem;
@@ -36,10 +35,10 @@ const EntireContainer = styled.div`
   }
 `;
 
-export default function Modal({ content, handleBtnClick, role }) {
+export default function Modal({ content, handleBtnClick, role, bg }) {
   const { showAlert } = useSelector(selectUserInfo);
   return (
-    <EntireContainer className="modal">
+    <EntireContainer className="modal" bg={bg}>
       <div className={`content ${role}`}>
         <span
           className={showAlert ? 'x-btn loading' : 'x-btn'}

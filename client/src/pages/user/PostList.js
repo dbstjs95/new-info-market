@@ -117,6 +117,9 @@ const PostContainer = styled.li`
     margin: 10px 0;
     padding-left: 5px;
     box-shadow: -2px 3px 2px lightgray;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   > div.total_Likes_Views {
     display: flex;

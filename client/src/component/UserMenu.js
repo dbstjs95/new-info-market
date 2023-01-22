@@ -64,6 +64,7 @@ const Popup = styled.ul`
   background-color: white;
   text-align: center;
   box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.1);
+  z-index: 10000;
   li {
     border: 1px dotted lightgray;
     padding: 10px 20px;

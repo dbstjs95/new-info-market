@@ -13,8 +13,6 @@ import {
   cancelModify,
   deleteFile,
 } from '../../store/slices/selectedPost';
-import { selectPoint, updatePointState } from '../../store/slices/point';
-import ChargeBox, { PayWithPoints } from '../../component/ChargeBox';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear, faCircleMinus } from '@fortawesome/free-solid-svg-icons';
 import Setting from '../../component/content/Setting';
@@ -115,6 +113,11 @@ const SettingBox = styled.span`
 `;
 
 const Like = styled.div`
+  /* margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  font-size: 30px; */
+  /* margin-right: 30px; */
   font-size: 1.5rem;
 `;
 
@@ -141,56 +144,6 @@ const EditConfirmBox = styled(LikeDownload)`
     }
     &:nth-of-type(2) {
       background-color: #025896;
-    }
-  }
-`;
-
-// paid - PointContainer
-const PointContainer = styled(LikeDownload)`
-  justify-content: flex-end;
-  padding: 10px;
-  border: 0;
-  border-bottom: 1px solid lightgray;
-  font-weight: bold;
-  span {
-    &:first-child {
-      font-size: 0.9rem;
-      margin-right: 10px;
-      color: #6f02a6;
-    }
-    &:last-child {
-      margin-right: 15px;
-      background-color: #aba41b;
-      color: white;
-      padding: 3px 5px 0;
-      border-radius: 10px;
-    }
-  }
-`;
-
-const PayContainer = styled(LikeDownload)`
-  justify-content: flex-end;
-  > button {
-    border: 0;
-    background-color: #17ad0c;
-    color: white;
-    padding: 5px 8px;
-    font-weight: bold;
-    border-radius: 3px;
-    margin: 5px 5px 5px 0;
-    &:hover {
-      box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.2);
-      cursor: pointer;
-    }
-  }
-  > span {
-    color: crimson;
-    padding: 5px 3px;
-  }
-  @media screen and (max-width: 380px) {
-    justify-content: center;
-    > span {
-      font-size: 0.9rem;
     }
   }
 `;
@@ -229,7 +182,7 @@ const ContentBox = styled.textarea`
   border-bottom: 1px solid lightgray;
   outline: none;
   word-break: break-all;
-  /* 줄 간격 */
+  // 줄 간격
   line-height: 1.7rem;
 `;
 
@@ -315,20 +268,11 @@ function ContentFree({ paid }) {
     fileChange,
     modifyTextStep,
     modyfiedFileName,
-    targetPoint, // paid
-    isPurchased, // paid
   } = useSelector(selectSelectedPost);
 
-  // paid version - modalOpen
-  const { modalOpen } = useSelector(selectPoint);
-
-  // paid version - grade, point
-  const { id, isLogin, accToken, grade, point } = useSelector(selectUserInfo);
+  const { id, isLogin, accToken } = useSelector(selectUserInfo);
   const [localTitle, setLocalTitle] = useState(title);
   const [localContent, setLocalContent] = useState(content);
-
-  // paid version - preStep
-  const [preStep, setPreStep] = useState(false);
 
   const getConfig = {
     headers: {
@@ -380,30 +324,6 @@ function ContentFree({ paid }) {
     }
   };
 
-  // paid version - handleConfirm
-  const handleConfirm = (e) => {
-    e.preventDefault();
-    if (!isLogin) return alert('로그인 해주세요.');
-    if (id === userId)
-      //유저의 userId와 게시글 userId가 같으면 동일인물
-      return alert('자신의 게시물은 구매할 수 없습니다.');
-    //포인트 부족 --> 충전)
-    if (Number(targetPoint) > Number(point)) {
-      let confirm = window.confirm(
-        '잔여 포인트가 부족합니다. 포인트를 충전하시겠습니까?',
-      );
-      if (!confirm) return;
-      dispatch(
-        updatePointState({
-          modalOpen: true,
-        }),
-      );
-    } else {
-      //포인트 충분 --> 결제
-      setPreStep(true);
-    }
-  };
-
   //텍스트 수정 처리,
   useEffect(() => {
     if (!modifyTextStep) return;
@@ -438,12 +358,10 @@ function ContentFree({ paid }) {
     dispatch(cancelModify());
   }, [modifyTextStep]);
 
-  // 브라우저 창 클릭시 열린 세팅 모달 닫힘(1)
   const handleCloseModal = useCallback(() => {
     dispatch(updatePostState({ isOpen: false }));
   }, [isOpen]);
 
-  // 브라우저 창 클릭시 열린 세팅 모달 닫힘(2)
   useEffect(() => {
     window.addEventListener('click', handleCloseModal);
     return () => {
@@ -473,31 +391,6 @@ function ContentFree({ paid }) {
   return (
     <EntireContainer>
       <ContentContainer>
-        {/* paid: 결제하기전 확인 단계 */}
-        {paid && preStep && (
-          <Modal
-            handleBtnClick={() => setPreStep(false)}
-            content={<PayWithPoints handleClick={() => setPreStep(false)} />}
-            bg="#fbfced"
-          />
-        )}
-        {/* paid: 결제 모달 */}
-        {paid && modalOpen && (
-          <Modal
-            role="payment"
-            handleBtnClick={() =>
-              dispatch(
-                updatePointState({
-                  modalOpen: false,
-                }),
-              )
-            }
-            content={<ChargeBox />}
-            // bg="#f3f702"
-            bg="#f4fa57"
-          />
-        )}
-        {/* 게시물 삭제 확인 모달 */}
         {removeInfo && (
           <Modal
             handleBtnClick={() =>
@@ -508,7 +401,6 @@ function ContentFree({ paid }) {
           />
         )}
         <Container>
-          {/* title 편집 모드 */}
           {infoEditMode ? (
             <TitleEditBox
               type="text"
@@ -521,7 +413,6 @@ function ContentFree({ paid }) {
           ) : (
             <div className="title">{title}</div>
           )}
-          {/* 게시글 상세정보 */}
           <div className="info">
             <div className="details">
               <dl>
@@ -541,7 +432,6 @@ function ContentFree({ paid }) {
                 <dd>{totalLikes}</dd>
               </dl>
             </div>
-            {/* 설정 버튼 */}
             <SettingBox className={`setting ${isLogin ? '' : 'not_logined'}`}>
               <FontAwesomeIcon
                 icon={isOpen ? faCircleMinus : faGear}
@@ -554,18 +444,9 @@ function ContentFree({ paid }) {
                   dispatch(updatePostState({ isOpen: !isOpen }));
                 }}
               />
-              {/* 설정버튼 클릭--> 메뉴나옴  */}
               {isOpen && <Setting />}
             </SettingBox>
           </div>
-          {/* paid: 포인트 정보*/}
-          {paid && (
-            <PointContainer>
-              <span>포인트</span>
-              <span>{targetPoint} P</span>
-            </PointContainer>
-          )}
-          {/* content 편집 모드 */}
           {infoEditMode ? (
             <ContentEditBox
               rows="20"
@@ -578,18 +459,16 @@ function ContentFree({ paid }) {
           ) : (
             <ContentBox readOnly className="body" defaultValue={content} />
           )}
-          {/* 좋아요 및 다운로드 */}
           <LikeDownload>
             {!infoEditMode && (
               <Like onClick={likeClick} style={{ cursor: 'pointer' }}>
                 {like ? '♥' : '♡'} {totalLikes}
               </Like>
             )}
-            {/* 첨부파일 편집모드: 아래 첨부파일은 회원만 다운 가능 */}
+            {/* 아래 첨부파일은 회원만 다운 가능 */}
             {infoEditMode ? (
               <FileChange />
             ) : (
-              // 첨부파일이 있어야 다운로드 링크가 뜸
               fileURL && (
                 <a
                   href={
@@ -614,17 +493,6 @@ function ContentFree({ paid }) {
               )
             )}
           </LikeDownload>
-          {/* paid: 결제 여부 또는 결제하기 버튼 */}
-          {paid && !infoEditMode && (
-            <PayContainer>
-              {isPurchased ? (
-                <span>구매한 이력이 있는 게시물입니다.</span>
-              ) : (
-                <button onClick={handleConfirm}>결제하기</button>
-              )}
-            </PayContainer>
-          )}
-          {/* 수정 시 나타나는 버튼들 */}
           {infoEditMode && (
             <EditConfirmBox>
               <button onClick={() => dispatch(cancelModify())}>취소</button>

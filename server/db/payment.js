@@ -56,7 +56,7 @@ async function refundPayment(tid) {
 async function getPayments(userId, pages, limit, state) {
   return await Payment.findAndCountAll({
     where: {
-      id: userId,
+      userId,
       state,
     },
     limit,

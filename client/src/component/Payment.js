@@ -7,7 +7,7 @@ import {
   initPayment,
 } from '../store/slices/point';
 import { updateState, selectUserInfo } from '../store/slices/userInfo';
-import { v1, v3, v4, v5 } from 'uuid';
+import { v4 } from 'uuid';
 
 const Payment = (effect, deps) => {
   const dispatch = useDispatch();
@@ -84,14 +84,14 @@ const Payment = (effect, deps) => {
         )
         .then((res) => {
           dispatch(updateState({ point: Number(point) + Number(amount) }));
-          alert('결제 성공');
+          alert('포인트를 충전했습니다.');
         })
         .catch((err) => {
           if (err.response?.message) alert(err.response.message);
         });
     } else {
       dispatch(initPayment());
-      alert(`결제 실패 : ${error_msg}`);
+      alert(`포인트 충전 실패 : ${error_msg}`);
     }
   };
 

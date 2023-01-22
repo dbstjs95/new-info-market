@@ -52,7 +52,7 @@ function Post() {
       });
   }, []);
 
-  return type === 'Free' ? <ContentFree /> : <ContentFree use="paid" />;
+  return type === 'Free' ? <ContentFree /> : <ContentFree paid={true} />;
 }
 
 export default Post;
