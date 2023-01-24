@@ -5,6 +5,7 @@ const auth = require("../middlewares/auth");
 
 router.get("/userinfo/:userId", auth.me, usersControllers.getUsersInfo);
 router.put("/userinfo/:userId", auth.me, usersControllers.editUsersInfo);
+router.post("/userinfo/check/:userId", auth.me, usersControllers.checkPassword);
 router.get("/info", auth.me, usersControllers.usersWriteInfo); // 403 에러 왜 났는지 찾기
 router.get("/info/order", auth.me, usersControllers.usersOrderInfo);
 router.get("/info/refund", auth.me, usersControllers.usersRefundInfo);

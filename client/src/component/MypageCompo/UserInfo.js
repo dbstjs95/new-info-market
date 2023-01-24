@@ -15,7 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRotateLeft } from '@fortawesome/free-solid-svg-icons';
 import ChargeBox from '../ChargeBox';
 import AWS from 'aws-sdk';
-import { v1, v3, v4, v5 } from 'uuid';
+import { v4 } from 'uuid';
 
 const ACCESS_KEY = process.env.REACT_APP_AWS_ACCESS_KEY_ID;
 const SECRET_ACCESS_KEY = process.env.REACT_APP_AWS_SECRET_ACCESS_KEY;
@@ -33,152 +33,165 @@ const myBucket = new AWS.S3({
 });
 
 const EntireContainer = styled.div`
-  /* border: 5px solid blue; */
-  height: 100%;
-  @media screen and (max-width: 800px) {
-    font-size: 0.9rem;
-  }
-  @media screen and (max-width: 590px) {
-    font-size: 0.7rem;
-  }
-  > div.modal div.content {
-    max-width: 600px;
-    &.payment {
-      /* 모달창 배경색 */
-      background-color: #f3f702;
-    }
+  margin: 0 auto;
+`;
 
-    @media screen and (max-width: 700px) {
-      > div.charge-box {
-        font-size: 0.8rem;
-        > input,
-        button {
-          font-size: inherit;
-        }
-      }
-    }
+const UserInfoContainer = styled.ul`
+  background-color: lavender;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: stretch;
+  padding: 30px 0;
+  * {
+    font-family: '순천B';
+    color: #333;
   }
-  > ul#user-Info-container {
-    margin-top: 0;
-    border: 5px solid orange;
-    border-radius: 5px;
-    font-weight: bold;
-    min-height: 25%;
+  > li {
     background-color: white;
-    display: flex;
-    list-style: none;
-    padding-left: 0;
-    align-items: center;
-    justify-content: space-around;
-    > li {
-      /* border: 1px dotted black; */
-      height: 200px;
-      &:nth-child(2) {
-        border-left: 1px solid lightgray;
-        border-right: 1px solid lightgray;
-      }
-      &.profile {
-        /* flex: 3; */
-        min-width: 35%;
+    border-radius: 10px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+    &:first-of-type {
+      display: flex;
+      padding: 10px 5px;
+      > div {
         display: flex;
+        justify-content: center;
         align-items: center;
-        justify-content: space-evenly;
-        @media screen and (max-width: 800px) {
+        padding: 10px 15px;
+        &:first-of-type {
           flex-direction: column;
-        }
-        > div {
-          /* border: 3px solid purple; */
-          margin: 0 5px 0 5px;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          &#grade {
-            /* border: 3px solid blue; */
-            border-radius: 3px;
-            padding: 3% 2%;
-            background-color: #555c5c;
-            color: white;
-          }
           > figure {
-            margin: 0;
-            margin-bottom: 8px;
-            /* border: 1px solid black; */
-            min-width: 80px;
-            min-height: 80px;
+            box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.7);
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             background-repeat: no-repeat;
             background-position: center;
             background-size: cover;
-            @media screen and (max-width: 700px) {
-              min-width: 60px;
-              min-height: 60px;
-            }
+          }
+          > span {
+            display: block;
+            text-align: center;
+            cursor: pointer;
+            color: crimson;
+            padding-top: 5px;
+          }
+        }
+        &:nth-of-type(2) {
+        }
+        &:last-of-type {
+          color: ${({ gradeColor }) => gradeColor};
+        }
+        &:nth-of-type(2),
+        &:last-of-type {
+          white-space: nowrap;
+        }
+      }
+    }
+    &:nth-of-type(2) {
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      > div {
+        &:first-of-type {
+          margin-right: 15px;
+        }
+        &:last-of-type {
+        }
+        > p {
+          text-align: center;
+          white-space: nowrap;
+          padding: 5px;
+          &:first-of-type {
+            color: brown;
+            border-bottom: 1px solid lightgray;
           }
         }
       }
-      &.my-points {
-        /* flex: 2; */
-        min-width: 35%;
-        display: flex;
-        justify-content: center;
-        /* align-items: center; */
-        /* border: 1px solid green; */
-
-        > div.detail {
-          /* border: 2px solid black; */
-          /* flex: 6; */
-          width: 85%;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-around;
-          align-items: stretch;
-          > div {
-            /* border: 1px solid blue; */
+    }
+    &:last-of-type {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 20px;
+      > button {
+        white-space: nowrap;
+        padding: 5px 10px;
+        border: 0;
+        box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2);
+        border-radius: 3px;
+        background-color: whitesmoke;
+        color: #444;
+        &:first-of-type {
+          margin-right: 15px;
+        }
+        &:disabled {
+          cursor: not-allowed;
+          color: gray;
+        }
+      }
+    }
+  }
+  @media screen and (max-width: 1000px) {
+    padding: 15px 0;
+    > li {
+      flex-direction: column;
+      * {
+        font-size: 0.9rem;
+      }
+      &:first-of-type {
+        padding: 10px;
+        > div:first-of-type > figure {
+          width: 50px;
+          height: 50px;
+        }
+      }
+      &:nth-of-type(2) {
+        justify-content: space-around;
+        padding: 0 20px;
+        > div {
+          &:first-of-type {
             margin: 0;
-            /* width: 80%; */
-            &#charged {
-              /* margin-bottom: 5%; */
-            }
-            &#earnings {
-              /* margin-bottom: 7px; */
-            }
-            > p {
-              /* border: 1px solid orange; */
-              &:nth-child(1) {
-                background-color: #fa9c19;
-                border-radius: 5px;
-                padding: 3% 1%;
-                color: white;
-              }
-              margin: 0;
-              text-align: center;
-              &.amount {
-                padding: 4% 2%;
-                border: 1px solid lightgray;
-                border-radius: 5px;
-              }
-            }
           }
         }
       }
-
-      &.charging-withdrawal {
-        /* border: 1px solid gray; */
-        min-width: 30%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+      &:last-of-type {
+        justify-content: space-around;
+        padding: 0 25px;
         > button {
-          margin: 10px 0;
-          padding: 2%;
-          font-size: 1rem;
-          @media screen and (max-width: 800px) {
-            font-size: 0.9rem;
+          &:first-of-type {
+            margin: 0;
           }
-          @media screen and (max-width: 590px) {
-            font-size: 0.7rem;
+        }
+      }
+    }
+  }
+  @media screen and (max-width: 500px) {
+    padding: 10px;
+    flex-direction: column;
+    > li {
+      flex-direction: row;
+      border-radius: 0;
+      box-shadow: inset 0 0 0;
+      &:first-of-type {
+        justify-content: center;
+      }
+      &:nth-of-type(2) {
+        justify-content: center;
+        padding: 15px 0;
+        margin: 10px 0;
+        > div {
+          &:first-of-type {
+            margin-right: 10px;
+          }
+        }
+      }
+      &:last-of-type {
+        justify-content: center;
+        padding: 15px 0;
+        > button {
+          &:first-of-type {
+            margin-right: 10px;
           }
         }
       }
@@ -220,6 +233,13 @@ function UserInfo() {
   const fileInput = useRef(null);
   const [selectedFile, setSelectedFile] = useState('');
 
+  // grade별 글자색
+  const gradeColor = {
+    Bronze: 'rgb(205, 127, 50)',
+    Silver: 'silver',
+    Gold: 'gold',
+  };
+
   //서버 통신 헤더: post용, get용
   const postConfig = {
     headers: {
@@ -237,6 +257,7 @@ function UserInfo() {
 
   //처음 렌더링때 작동: 유저정보 불러오기
   useEffect(() => {
+    if (accToken && !id) return;
     axios
       .get(
         `${process.env.REACT_APP_SERVER_DEV_URL}/users/userinfo/${id}`,
@@ -244,16 +265,16 @@ function UserInfo() {
       )
       .then((res) => {
         const { user } = res.data;
-        console.log('user: ', user);
         if (user) {
           delete user.password;
           dispatch(updateState({ ...user, profileImg: user.img }));
         }
       })
       .catch((err) => {
+        console.error('???', err);
         alert('회원정보 불러오기 실패');
       });
-  }, []);
+  }, [id]);
 
   //포인트 결제 모달 열기
   const handleModalOpen = (e) => {
@@ -443,7 +464,7 @@ function UserInfo() {
           handleBtnClick={handleCancleClick}
         />
       )}
-      <ul id="user-Info-container">
+      <UserInfoContainer gradeColor={gradeColor[grade]}>
         <li className="profile">
           <input
             type="file"
@@ -470,7 +491,7 @@ function UserInfo() {
             />
             {/* 프로필 초기화 */}
             {profileImg && (
-              <span style={{ cursor: 'pointer' }}>
+              <span>
                 <FontAwesomeIcon onClick={resetImg} icon={faRotateLeft} />
               </span>
             )}
@@ -481,24 +502,20 @@ function UserInfo() {
           </div>
         </li>
         <li className="my-points">
-          <div className="detail">
-            <div id="charged">
-              <p style={{ whiteSpace: 'nowrap' }}>충전 포인트</p>
-              <p className="amount">{point} P</p>
-            </div>
-            <div id="earnings">
-              <p style={{ whiteSpace: 'nowrap' }}>누적 수익 포인트</p>
-              <p className="amount">{earnings} P</p>
-            </div>
+          <div id="charged">
+            <p>충전 포인트</p>
+            <p className="amount">{point} P</p>
+          </div>
+          <div id="earnings">
+            <p>누적 수익 포인트</p>
+            <p className="amount">{earnings} P</p>
           </div>
         </li>
         <li className="charging-withdrawal">
-          <button onClick={handleModalOpen} style={{ whiteSpace: 'nowrap' }}>
-            포인트 충전
-          </button>
-          <button style={{ whiteSpace: 'nowrap' }}>포인트 출금</button>
+          <button onClick={handleModalOpen}>포인트 충전</button>
+          <button disabled>포인트 출금</button>
         </li>
-      </ul>
+      </UserInfoContainer>
       <Outlet />
     </EntireContainer>
   );

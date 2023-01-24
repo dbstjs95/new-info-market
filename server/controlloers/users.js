@@ -23,7 +23,36 @@ module.exports = {
 
     return res.status(200).json({ user, message: "유저 정보를 가져왔습니다." });
   },
+  checkPassword: async (req, res) => {
+    const { userId } = req.params;
+    const { password } = req.body;
 
+    if (userId != req.userId) {
+      return res.status(403).json({ message: "유저가 일치하지 않습니다." });
+    }
+
+    const user = await userDb.findPkUser(Number(userId));
+
+    const { password: dbPwd } = user;
+    if (!dbPwd)
+      return res
+        .status(500)
+        .json({ message: "DB에서 유저 비밀번호를 조회하는 데 실패했습니다." });
+
+    const verification = await bcrypt
+      .comparePw(password, dbPwd)
+      .catch((err) => {
+        console.log(err);
+      });
+
+    if (!verification) {
+      return res.status(400).json({ message: "비밀번호가 일치하지 않음" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "비밀번호가 일치함을 확인했습니다." });
+  },
   editUsersInfo: async (req, res) => {
     const { userId } = req.params;
 

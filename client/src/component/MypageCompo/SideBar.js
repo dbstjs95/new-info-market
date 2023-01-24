@@ -1,64 +1,73 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import { Outlet } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGear } from '@fortawesome/free-solid-svg-icons';
+import { faGear, faXmark, faBars } from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from 'react-redux';
 import { selectUserInfo } from '../../store/slices/userInfo';
 
 const EntireContainer = styled.div`
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  > div {
+  position: relative;
+  /* border: 2px solid blue; */
+  overflow-x: hidden;
+  > section {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transition: transform 0.5s cubic-bezier(0, 0.52, 0, 1);
+    z-index: 1000;
     display: flex;
-    width: 70%;
+    flex-direction: column;
+    width: 180px;
+    background-color: #ac19bf;
+    &.show {
+      transform: translate3d(0%, 0, 0);
+    }
+    &.hide {
+      transform: translate3d(-105%, 0, 0);
+    }
+    > span {
+      position: absolute;
+      top: 5px;
+      left: 105%;
+      display: flex;
+      align-items: center;
+      background-color: #ac19bf;
+      color: white;
+      font-size: 1.2rem;
+      padding: 10px;
+      cursor: pointer;
+      z-index: 1000;
+      &:hover {
+        box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.3);
+      }
+    }
+    > a {
+      font-weight: bold;
+      text-align: center;
+      padding: 20px 10px;
+      color: white;
+      border-bottom: 1px solid #f4b8fc;
+      transition: all 0.2s linear;
+      &.activated {
+        background-color: #f4dcf7;
+        color: #ac19bf;
+      }
+      &:not(.activated):hover {
+        padding: 25px 10px;
+        box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.3);
+      }
+    }
+  }
+  > div.userInfo {
+    width: 80%;
+    margin: 0 auto;
     @media screen and (max-width: 1100px) {
-      min-width: 90%;
+      width: 90%;
     }
-    @media screen and (max-width: 900px) {
-      min-width: 100%;
-    }
-    height: 100%;
-    /* border: 3px solid black; */
-    > section {
-      /* border: 4px solid green; */
-      /* border-radius: 0 7px 7px 0; */
-      flex: 1 0 20%;
-      display: flex;
-      flex-direction: column;
-      /* min-width: 20%; */
-      padding: 1%;
-      background-color: orange;
-      > .nav-link {
-        font-weight: bold;
-        text-align: center;
-        padding: 3% 1%;
-        border-radius: 5px;
-        color: white;
-        text-decoration: none;
-        margin-bottom: 10%;
-        &:hover {
-          background-color: white;
-          color: #ff5733;
-        }
-      }
-      > .activated {
-        background-color: white;
-        color: #ff5733;
-      }
-    }
-
-    > div.userInfo {
-      background-color: orange;
-      border-top-right-radius: 5px;
-      min-width: 80%;
-      /* padding: 2%; */
-      flex: 1 1 80%;
-      display: flex;
-      flex-direction: column;
+    @media screen and (max-width: 800px) {
+      width: 100%;
     }
   }
 `;
@@ -73,40 +82,39 @@ const SideBar = () => {
     ['포인트 충전 내역', '/mypage/info/chargedPointList', ''],
     ['환불 내역', '/mypage/info/refundList', ''],
     ['무료글 작성', '/mypage/freeWriting', ''],
+    ['유료글 작성', '/mypage/salesWriting', ''],
   ];
 
-  const [Links, setLinks] = useState(linkList);
+  const [MenuOpen, setMenuOpen] = useState(true);
 
-  //아래 Bronze는 나중에 빼기
-  useEffect(() => {
-    if (['Bronze', 'Silver', 'Gold'].includes(grade)) {
-      setLinks((prev) => [
-        ...prev,
-        ['유료글 작성', '/mypage/salesWriting', ''],
-      ]);
-    }
-  }, []);
+  const handleSideBar = () => {
+    setMenuOpen((prev) => !prev);
+  };
 
   return (
     <EntireContainer>
-      <div>
-        <section>
-          {Links.map(([item, link, icon], idx) => (
+      <section className={MenuOpen ? 'show' : 'hide'}>
+        <span onClick={handleSideBar}>
+          <FontAwesomeIcon icon={MenuOpen ? faXmark : faBars} />
+        </span>
+        {linkList.map(([item, link, icon], idx) => {
+          let lastIdx = linkList.length - 1;
+          if (!['Bronze', 'Silver', 'Gold'].includes(grade) && idx === lastIdx)
+            return;
+          return (
             <NavLink
               key={idx}
               style={{ whiteSpace: 'nowrap' }}
-              className={({ isActive }) =>
-                'nav-link' + (isActive ? ' activated' : '')
-              }
+              className={({ isActive }) => (isActive ? ' activated' : '')}
               to={link}
             >
               {item} {icon ? <FontAwesomeIcon icon={faGear} /> : ''}
             </NavLink>
-          ))}
-        </section>
-        <div className="userInfo">
-          <Outlet />
-        </div>
+          );
+        })}
+      </section>
+      <div className="userInfo">
+        <Outlet />
       </div>
     </EntireContainer>
   );

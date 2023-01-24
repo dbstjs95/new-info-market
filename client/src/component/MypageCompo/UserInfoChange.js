@@ -12,80 +12,138 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const EntireContainer = styled.div`
-  /* border: 5px solid red; */
-  height: 57%;
   display: flex;
+  justify-content: space-between;
+  padding: 30px;
+  margin: 0 auto;
+  border: 10px solid #d7cdf7;
   > div.first {
-    border-left: 5px solid orange;
-    border-right: 1px solid lightgray;
-    background-color: white;
-    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    border-radius: 10px;
+    border: 5px dashed #d7cdf7;
+    padding: 0 10px;
     > .key {
       font-size: 2rem;
     }
     > input {
-      margin: 10% 0;
-      width: 60%;
+      width: 80%;
+      padding: 5px;
+      margin: 10px 0;
     }
     > button {
-      width: 30%;
+      padding: 5px;
+    }
+    @media screen and (max-width: 680px) {
+      * {
+        font-size: 0.9rem;
+      }
     }
   }
   > form.second {
-    border-top: 1px solid lightgray;
-    border-bottom: 1px solid lightgray;
-    background-color: white;
-    border-right: 5px solid orange;
-    flex: 2;
+    width: 80%;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    input,
+    button {
+      border: 1px solid gray;
+      padding: 7px 10px;
+      border-radius: 5px;
+      @media screen and (max-width: 680px) {
+        padding: 5px 7px;
+        font-size: 0.9rem;
+      }
+    }
     > div.modifying-box {
-      /* border: 3px solid green; */
-      flex: 9;
+      padding: 20px 0;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       > div.input-box {
-        /* border: 1px solid red; */
-        margin-bottom: 10px;
-        > input {
-          font-size: 1rem;
+        &:not(:first-of-type) {
+          margin-top: 20px;
         }
-        > p {
-          margin: 0;
-          font-size: 0.8rem;
-        }
-        > input#new-pwd-check {
-          margin-top: 1rem;
+        > button {
+          margin-left: 5px;
         }
       }
-      > div#pwd-box {
-        display: flex;
-        flex-direction: column;
+      > .pwd {
+        margin-top: 20px;
+        &:last-of-type {
+          margin-top: 10px;
+        }
+      }
+      > p.error-message {
+        font-size: 0.8rem;
+        word-break: break-all;
+        max-width: 230px;
       }
       > button.account {
-        min-width: 20%;
-        padding: 2%;
-        background-color: orange;
-        font-size: 1rem;
+        margin-top: 30px;
+        &:disabled {
+          cursor: not-allowed;
+          color: gray;
+        }
       }
     }
     > div.confirm {
-      /* border: 3px solid black; */
-      border-top: 1px solid lightgray;
       padding-top: 15px;
-      flex: 1;
       display: flex;
       justify-content: flex-end;
       align-items: flex-start;
       > button {
-        margin-right: 2%;
-        font-size: 1rem;
+        &:first-of-type {
+          margin-right: 10px;
+        }
+        &:disabled {
+          cursor: not-allowed;
+          color: gray;
+        }
+      }
+    }
+  }
+  @media screen and (max-width: 680px) {
+    padding: 20px;
+    border: 7px solid #d7cdf7;
+  }
+  @media screen and (max-width: 600px) {
+    flex-direction: column;
+    padding: 0;
+    > div.first {
+      padding: 15px 0;
+      > .key {
+        font-size: 1.5rem;
+      }
+      > input {
+        width: auto;
+        padding: 3px;
+        font-size: 0.9rem;
+      }
+      > input,
+      > button {
+        padding: 3px;
+        font-size: 0.9rem;
+      }
+    }
+    > form.second {
+      width: 100%;
+      padding: 15px 0;
+    }
+  }
+  @media screen and (max-width: 380px) {
+    > div.first {
+      padding: 15px 0;
+      > input {
+        width: auto;
+      }
+    }
+    > form.second {
+      padding: 10px 0;
+      > div.modifying-box {
+        padding: 10px;
       }
     }
   }
@@ -112,7 +170,7 @@ function UserInfoChange() {
     withCredentials: true,
   };
 
-  const [locked, setLocked] = useState(true);
+  const [locked, setLocked] = useState(false);
   const [pwdCheckInput, setPwdCheckInput] = useState('');
   const [inputVal, setInputVal] = useState({
     email: '',
@@ -135,8 +193,18 @@ function UserInfoChange() {
 
   //회원정보수정 접근 권한 얻기
   const checkPwd = () => {
-    if (pwdCheckInput === password) setLocked(false);
-    setPwdCheckInput('');
+    axios
+      .post(
+        `${process.env.REACT_APP_SERVER_DEV_URL}/users/userInfo/check/${id}`,
+        { password: pwdCheckInput },
+        postConfig,
+      )
+      .then(() => setLocked(false))
+      .catch((err) => {
+        console.error(err);
+        alert('비밀번호 확인 실패');
+      })
+      .finally(() => setPwdCheckInput(''));
   };
 
   //회원정보수정 인풋값 반영
@@ -147,10 +215,6 @@ function UserInfoChange() {
     if (e.target.name === 'password') pwdCheck(e.target.value);
     if (e.target.name === 'rePwd') rePwdCheck(e.target.value);
   };
-
-  useEffect(() => {
-    if (!isLogin) navigate('/main');
-  }, [isLogin]);
 
   //이메일 값에 따른 에러메세지 상태 변화
   const emailCheck = (inputEmail) => {
@@ -362,6 +426,11 @@ function UserInfoChange() {
       .catch((err) => alert('서버 에러 발생! 다시 시도해주세요.'));
   };
 
+  useEffect(() => {
+    if (accToken && !isLogin) return;
+    if (!isLogin) navigate('/main');
+  }, [isLogin]);
+
   return (
     <EntireContainer>
       <div className="first">
@@ -386,22 +455,21 @@ function UserInfoChange() {
           <div className="input-box">
             <input
               name="email"
-              className="content"
+              // className="content"
               type="email"
               placeholder={email}
               disabled={locked}
               onChange={handleChange}
             />
             <button disabled={locked} onClick={emailAuthentication}>
-              인증
+              확인
             </button>
-            <p className="error-message">{errorMsg.email}</p>
           </div>
-
+          <p className="error-message">{errorMsg.email}</p>
           <div className="input-box">
             <input
               name="nickname"
-              className="content"
+              // className="content"
               type="text"
               placeholder={nickname}
               disabled={locked}
@@ -410,54 +478,48 @@ function UserInfoChange() {
             <button disabled={locked} onClick={isValidNickName}>
               중복검사
             </button>
-            <p className="error-message">{errorMsg.nickname}</p>
           </div>
+          <p className="error-message">{errorMsg.nickname}</p>
 
           <div className="input-box">
             <input
               name="phone"
-              className="content"
+              // className="content"
               type="tel"
               placeholder={phone}
               disabled={locked}
               onChange={handleChange}
             />
             <button disabled={locked} onClick={phoneAuthentication}>
-              인증
+              확인
             </button>
-            <p className="error-message">{errorMsg.phone}</p>
           </div>
+          <p className="error-message">{errorMsg.phone}</p>
 
-          <div id="pwd-box" className="input-box">
-            <input
-              name="password"
-              id="new-pwd"
-              type="password"
-              value={inputVal.password}
-              placeholder="새 비밀번호"
-              disabled={locked}
-              onChange={handleChange}
-            />
-            <p className="error-message">{errorMsg.password}</p>
-            <input
-              name="rePwd"
-              id="new-pwd-check"
-              type="password"
-              value={inputVal.rePwd}
-              placeholder="비밀번호 확인"
-              disabled={locked}
-              onChange={handleChange}
-            />
-            <p className="error-message">{errorMsg.rePwd}</p>
-          </div>
-          <button
-            style={{ whiteSpace: 'nowrap' }}
-            className="account"
-            // disabled={locked}
-            disabled
-          >
+          <input
+            name="password"
+            className="pwd"
+            type="password"
+            value={inputVal.password}
+            placeholder="새 비밀번호"
+            disabled={locked}
+            onChange={handleChange}
+          />
+          <p className="error-message">{errorMsg.password}</p>
+          <input
+            name="rePwd"
+            className="pwd"
+            type="password"
+            value={inputVal.rePwd}
+            placeholder="비밀번호 확인"
+            disabled={locked}
+            onChange={handleChange}
+          />
+
+          <p className="error-message">{errorMsg.rePwd}</p>
+          {/* <button style={{ whiteSpace: 'nowrap' }} className="account" disabled>
             계좌 인증 하기
-          </button>
+          </button> */}
         </div>
         <div className="confirm">
           <button disabled={locked} onClick={handleWithdrawal}>

@@ -26,6 +26,7 @@ const BodyContainer = styled.div`
     font-family: '다이어리';
     font-family: '순천R';
   }
+  /* border: 2px solid red; */
   min-height: 70vh;
   ${({ full }) =>
     full
