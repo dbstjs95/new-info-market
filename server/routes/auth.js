@@ -5,6 +5,8 @@ const authMe = require("../middlewares/auth");
 // const validation = require('../middlewares/validator');
 // import { body } from 'express-validator';
 
+// auth
+router.get("/", authMe.me);
 // 로그인
 router.post("/login", authControllers.login);
 // 로그아웃

@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { selectUserInfo } from '../../store/slices/userInfo';
 import { useNavigate } from 'react-router-dom';
 import AWS from 'aws-sdk';
-import { v1, v3, v4, v5 } from 'uuid';
+import { v4 } from 'uuid';
 
 const ACCESS_KEY = process.env.REACT_APP_AWS_ACCESS_KEY_ID;
 const SECRET_ACCESS_KEY = process.env.REACT_APP_AWS_SECRET_ACCESS_KEY;
@@ -98,8 +98,9 @@ const FileBox = styled.div`
 `;
 
 function Writing() {
-  const { id, accToken } = useSelector(selectUserInfo);
-  const config = {
+  const accToken = localStorage.getItem('act');
+
+  const postConfig = {
     headers: {
       'content-type': 'application/json',
       Authorization: `Bearer ${accToken}`,
@@ -133,7 +134,7 @@ function Writing() {
           content,
           file: '',
         },
-        config,
+        postConfig,
       )
       .then((res) => {
         if (res.data.infoId) alert('글이 등록되었습니다.');
@@ -173,7 +174,7 @@ function Writing() {
             ...textValues,
             file: fileName,
           },
-          config,
+          postConfig,
         )
         .then((res) => {
           setTextValues({

@@ -15,10 +15,6 @@ import bulb from '../../images/bulb.jpeg';
 const EntireContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  * {
-    /* border: 1px solid #000; */
-  }
-
   > div.main {
     width: 45%;
     background-image: url(${main});
@@ -29,7 +25,6 @@ const EntireContainer = styled.div`
       display: none;
     }
   }
-
   > div#best_list {
     width: 55%;
     display: flex;
@@ -38,7 +33,6 @@ const EntireContainer = styled.div`
       width: 100%;
     }
   }
-
   div.bar {
     height: 80px;
   }
@@ -56,27 +50,12 @@ const UlContainer = styled.ul`
   flex-direction: column;
   align-items: center;
   border-radius: 0 0 10px 10px;
-  /* overflow-y: auto; */
-  /* position: relative; */
-  /* overflow-x: hidden; */
-  /* list-style: none;
-  margin: 0;
-  padding: 0;
-  border: 15px solid #ccccba;
-  border-radius: 10px;
-  width: 90%;
-  grid-column: 5 / 9;
-  grid-row: 2 / 8;
-  justify-self: center;
-  opacity: 0.8;
-  border-top: 0;
-  display: grid;
-  grid-template-columns: repeat(1, minmax(100%, auto));
-  grid-template-rows: repeat(20, minmax(100px, auto));
-  overflow-y: auto;
-  overflow-x: hidden;
-  gap: 10px 0px;
-  min-width: 600px; */
+
+  -ms-overflow-style: none; /* 인터넷 익스플로러 */
+  scrollbar-width: none; /* 파이어폭스 */
+  &::-webkit-scrollbar {
+    display: none; /* 크롬, 사파리, 오페라, 엣지 */
+  }
   > li {
     background-color: whitesmoke;
     width: 90%;
@@ -123,7 +102,6 @@ const UlContainer = styled.ul`
       font-weight: bold;
       font-size: 1.1rem;
       > p.head {
-        /* height: 100%; */
         display: flex;
         align-items: center;
         width: 90%;
@@ -194,9 +172,9 @@ function Post({ post, order }) {
   );
 }
 
-function List({ posts, className }) {
+function List({ posts }) {
   return (
-    <UlContainer className={className}>
+    <UlContainer>
       <li id="top10_title">
         Best Info <span>TOP 10</span>
       </li>
@@ -212,7 +190,7 @@ function List({ posts, className }) {
 
 function Mainpage() {
   const dispatch = useDispatch();
-  const { accToken } = useSelector(selectUserInfo);
+  const accToken = localStorage.getItem('act');
   const [list, setList] = useState([]);
 
   const getConfig = {

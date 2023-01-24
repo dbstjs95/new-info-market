@@ -241,19 +241,20 @@ function Comment() {
   const dispatch = useDispatch();
   const { id: infoId, reviews } = useSelector(selectSelectedPost);
   const userInfo = useSelector(selectUserInfo);
+  const accToken = localStorage.getItem('act');
 
   const [input, setInput] = useState('');
 
-  const postConfig = {
+  const getConfig = {
     headers: {
-      'content-type': 'application/json',
-      Authorization: `Bearer ${userInfo.accToken}`,
+      Authorization: `Bearer ${accToken}`,
     },
     withCredentials: true,
   };
-  const getConfig = {
+  const postConfig = {
     headers: {
-      Authorization: `Bearer ${userInfo.accToken}`,
+      'content-type': 'application/json',
+      Authorization: `Bearer ${accToken}`,
     },
     withCredentials: true,
   };

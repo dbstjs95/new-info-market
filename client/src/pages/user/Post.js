@@ -9,13 +9,13 @@ import {
   selectSelectedPost,
 } from '../../store/slices/selectedPost';
 import ContentFree from '../content/ContentFree';
-import ContentPaid from '../content/ContentPaid';
 
 function Post() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { postId } = useParams();
-  const { accToken, id } = useSelector(selectUserInfo);
+  const { id } = useSelector(selectUserInfo);
+  const accToken = localStorage.getItem('act');
   const { type } = useSelector(selectSelectedPost);
 
   const getConfig = {

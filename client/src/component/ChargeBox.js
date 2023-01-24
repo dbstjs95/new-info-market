@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUserInfo, updateState } from '../store/slices/userInfo';
 import {
@@ -84,7 +84,8 @@ export function PayWithPoints({ handleClick }) {
   const dispatch = useDispatch();
   const { targetPoint, id: infoId } = useSelector(selectSelectedPost);
   const { payNow } = useSelector(selectPoint);
-  const { id: userId, point, accToken } = useSelector(selectUserInfo);
+  const { id: userId, point } = useSelector(selectUserInfo);
+  const accToken = localStorage.getItem('act');
 
   const postConfig = {
     headers: {

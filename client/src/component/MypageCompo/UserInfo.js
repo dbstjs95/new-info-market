@@ -209,13 +209,13 @@ function UserInfo() {
     nickname,
     profileImg,
     point,
-    accToken,
     grade,
     earnings,
     previewImg,
     progress,
     showAlert,
   } = useSelector(selectUserInfo);
+  const accToken = localStorage.getItem('act');
   const { modalOpen } = useSelector(selectPoint);
   const fileInput = useRef(null);
   const [selectedFile, setSelectedFile] = useState('');

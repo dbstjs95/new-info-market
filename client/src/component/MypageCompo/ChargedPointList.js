@@ -84,7 +84,8 @@ function ChargedPointList() {
   const [pointList, setPointList] = useState([]);
   const totalCount = pointList.length;
   const totalPage = Math.ceil(totalCount / LIMIT) || 1;
-  const { id: userId, accToken } = useSelector(selectUserInfo);
+  const { id: userId } = useSelector(selectUserInfo);
+  const accToken = localStorage.getItem('act');
 
   const getConfig = {
     headers: {

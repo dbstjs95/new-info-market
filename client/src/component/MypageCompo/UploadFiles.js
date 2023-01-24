@@ -9,8 +9,8 @@ import { useSelector } from 'react-redux';
 import { selectUserInfo } from '../../store/slices/userInfo';
 
 const UploadFiles = forwardRef((props, ref) => {
-  const { accToken } = useSelector(selectUserInfo);
-  const config = {
+  const accToken = localStorage.getItem('act');
+  const getConfig = {
     headers: {
       'content-type': 'application/json',
       Authorization: `Bearer ${accToken}`,
@@ -32,7 +32,7 @@ const UploadFiles = forwardRef((props, ref) => {
       return new Promise((resolve, reject) => {
         if (selectedFile) {
           let result = fileUploadService
-            .upload(selectedFile, config, inputValues)
+            .upload(selectedFile, getConfig, inputValues)
             .then((response) => {
               setMessage(response.data.message);
               resolve(response.data.file);

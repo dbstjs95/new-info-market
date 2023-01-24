@@ -61,9 +61,12 @@ const Termdiv3 = styled.div`
 `;
 
 const Textarea = styled.textarea`
-  height: 6.25em;
+  height: 8em;
   width: 50%;
   resize: none;
+  padding: 7px;
+  outline: none;
+  word-break: break-all;
   @media screen and (max-width: 900px) {
     width: 70%;
   }

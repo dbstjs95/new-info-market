@@ -84,8 +84,10 @@ function UserMenu() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const { isLogin, accToken, grade } = useSelector(selectUserInfo);
-  const config = {
+  const { isLogin } = useSelector(selectUserInfo);
+  const accToken = localStorage.getItem('act');
+
+  const getConfig = {
     headers: {
       Authorization: `Bearer ${accToken}`,
     },
@@ -110,8 +112,13 @@ function UserMenu() {
 
   const handleLogOut = () => {
     axios
-      .post(`${process.env.REACT_APP_SERVER_DEV_URL}/auth/logout`, null, config)
+      .post(
+        `${process.env.REACT_APP_SERVER_DEV_URL}/auth/logout`,
+        null,
+        getConfig,
+      )
       .then((res) => {
+        window.localStorage.removeItem('act');
         dispatch(clearState());
         navigate('/main');
       })
@@ -137,12 +144,7 @@ function UserMenu() {
                 className="mypage-btn"
                 onClick={() => navigate(`/mypage/info/change`)}
               >
-                {/* <Link
-                  to="/mypage/info/change"
-                  style={{ textDecoration: 'none' }}
-                > */}
                 마이페이지
-                {/* </Link> */}
               </li>
               <li onClick={() => navigate(`/mypage/freeWriting`)}>
                 무료글 작성

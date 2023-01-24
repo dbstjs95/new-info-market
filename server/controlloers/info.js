@@ -195,16 +195,11 @@ module.exports = {
     let { pages, limit, like_type } = req.query;
     let cursor;
 
-    let like;
-
-    if (like_type === "true") {
-      like = "desc";
-    } else if (like_type === "false") {
-      like = "asc";
-    }
+    let like = like_type === "false" ? false : true;
+    let activate = true;
 
     if (Number(req.query.lastId) === 0) {
-      if (like_type === "false") {
+      if (!like) {
         const recentInfo = await infoDb.recentInfo(
           Number(pages),
           Number(limit),
@@ -223,7 +218,7 @@ module.exports = {
         const recentInfo = await infoDb.likeInfo(
           Number(pages),
           Number(limit),
-          like,
+          "desc",
           "Free"
         );
         if (!recentInfo) {
@@ -243,6 +238,7 @@ module.exports = {
       Number(pages),
       Number(limit),
       like,
+      activate,
       Number(cursor)
     );
 
@@ -258,20 +254,14 @@ module.exports = {
 
   getPaidInfo: async (req, res) => {
     let { pages, limit, like_type } = req.query;
+
+    let like = like_type === "false" ? false : true;
     const activate = true;
     let cursor;
 
-    let like;
-
-    if (like_type === "true") {
-      like = "desc";
-    } else if (like_type === "false") {
-      like = "asc";
-    }
-
     if (Number(req.query.lastId) === 0) {
       if (Number(req.query.lastId) === 0) {
-        if (like_type === "false") {
+        if (!like) {
           const recentInfo = await infoDb.recentInfo(
             Number(pages),
             Number(limit),
@@ -290,7 +280,7 @@ module.exports = {
           const recentInfo = await infoDb.likeInfo(
             Number(pages),
             Number(limit),
-            like,
+            "desc",
             "Paid"
           );
           if (!recentInfo) {

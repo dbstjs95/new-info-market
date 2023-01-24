@@ -51,7 +51,7 @@ const HeaderContainer = styled.div`
         background-color: lightgoldenrodyellow;
         box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
         transform: rotate(7deg);
-        color: orangered;
+        color: crimson;
       }
     }
   }
@@ -66,7 +66,7 @@ const HeaderContainer = styled.div`
       }
       &:hover {
         transform: scale(110%);
-        color: orangered;
+        color: crimson;
       }
     }
   }

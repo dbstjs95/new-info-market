@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import Comment from '../../component/content/Comment';
@@ -250,7 +250,7 @@ const ContentEditBox = styled.textarea`
 function RemoveInfoConfirm() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { accToken } = useSelector(selectUserInfo);
+  const accToken = localStorage.getItem('act');
   const { id: infoId } = useSelector(selectSelectedPost);
 
   const getConfig = {
@@ -323,7 +323,8 @@ function ContentFree({ paid }) {
   const { modalOpen } = useSelector(selectPoint);
 
   // paid version - grade, point
-  const { id, isLogin, accToken, grade, point } = useSelector(selectUserInfo);
+  const { id, isLogin, grade, point } = useSelector(selectUserInfo);
+  const accToken = localStorage.getItem('act');
   const [localTitle, setLocalTitle] = useState(title);
   const [localContent, setLocalContent] = useState(content);
 

@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectUserInfo } from '../../store/slices/userInfo';
 import axios from 'axios';
 
 const EntireContainer = styled.div`
@@ -110,8 +108,6 @@ function Post({ post }) {
 }
 
 function MyPosts() {
-  const dispatch = useDispatch();
-
   //페이징 변수
   const [page, setPage] = useState(1);
   const [totalCnt, setTotalCnt] = useState(null);
@@ -123,7 +119,7 @@ function MyPosts() {
   const [postList, setPostList] = useState([]);
 
   //axios 헤더용
-  const { accToken } = useSelector(selectUserInfo);
+  const accToken = localStorage.getItem('act');
   const config = {
     headers: {
       Authorization: `Bearer ${accToken}`,

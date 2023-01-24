@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   prev,
@@ -14,12 +14,8 @@ const PageContainer = styled.ul`
   display: flex;
   justify-content: center;
   align-items: center;
-  > li:not(:last-child) {
-    /* margin-right: 10px; */
-  }
   > li {
     cursor: pointer;
-    /* border: 2px solid white; */
     border-radius: 3px;
     font-size: 1.3rem;
     &.page {
@@ -27,7 +23,6 @@ const PageContainer = styled.ul`
       &:hover,
       &.selected {
         color: white;
-        /* border: 2px solid #4bab13; */
         background-color: #4bab13;
         border-radius: 3px;
       }

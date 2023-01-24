@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectUserInfo } from '../../store/slices/userInfo';
 import {
   updatePostState,
   selectSelectedPost,

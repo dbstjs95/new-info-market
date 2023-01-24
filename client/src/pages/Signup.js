@@ -179,6 +179,10 @@ const SignupBtnWrap = styled.div`
     border-radius: 4px;
     background: linear-gradient(162deg, #757677 0%, #888e97 70%, #a5a8ad 70%);
   }
+  > .register {
+    height: 50px;
+    background: linear-gradient(162deg, #66015a 0%, #d177c7 70%, #fa93ee 70%);
+  }
 `;
 
 const Msg = styled.div`
@@ -206,10 +210,11 @@ function Signup() {
     phone: '',
     nickname: '',
   });
+  const [rePwd, setRePwd] = useState('');
   const [checked, setChecked] = useState({
     emailCk: false,
     passwordCk: false,
-    phoneCk: true, //나중에 고치기
+    phoneCk: false,
     nicknameCk: false,
   });
   const [message, setMessage] = useState({
@@ -220,10 +225,6 @@ function Signup() {
     nicknameMsg: null,
     result: null,
   });
-
-  useEffect(() => {
-    if (isLogin) navigate('/main');
-  }, []);
 
   //라디오 버튼 체크
   const handleRoleCheck = (e) => {
@@ -294,9 +295,9 @@ function Signup() {
   };
 
   //비밀번호 재확인
-  const handlePwdReCheck = (e) => {
+  const handlePwdReCheck = () => {
     setChecked({ ...checked, passwordCk: false });
-    if (userInfo.password && e.target.value !== userInfo.password) {
+    if (userInfo.password && userInfo.password !== rePwd) {
       return setMessage({
         ...message,
         rePasswordMsg: '일치하지 않습니다.',
@@ -308,7 +309,6 @@ function Signup() {
 
   //핸드폰 인증 버튼 클릭
   const handlePhoneCheck = (e) => {
-    e.preventDefault();
     const phoneRegex = /^01([0|1|6|7|8|9])[-]+[0-9]{4}[-]+[0-9]{4}$/;
     if (!phoneRegex.test(userInfo.phone)) {
       return setMessage({
@@ -323,25 +323,31 @@ function Signup() {
 
   //닉네임 중복검사 클릭
   const handleNicknameCheck = (e) => {
-    e.preventDefault();
-    setChecked({ ...checked, nicknameCk: true }); //나중에 삭제
-    // axios
-    //   .get(`${process.env.REACT_APP_SERVER_DEV_URL}/users/${userInfo.nickname}`)
-    //   .then((res) => setChecked({ ...checked, nicknameCk: true }))
-    //   .catch((err) => {
-    //     if (err.response?.message) {
-    //       return setMessage({
-    //         ...message,
-    //         nicknameMsg: err.response.message,
-    //       });
-    //     }
-    //     alert('서버 에러: 닉네임 중복 검사 요청 실패');
-    //   });
-    setMessage({ ...message, nicknameMsg: '사용 가능한 닉네임입니다.' });
+    axios
+      .post(`${process.env.REACT_APP_SERVER_DEV_URL}/users/nickname`, {
+        nickname: userInfo.nickname,
+      })
+      .then(() => {
+        setMessage((prev) => ({
+          ...prev,
+          nicknameMsg: '사용 가능한 닉네임입니다.',
+        }));
+        setChecked((prev) => ({ ...prev, nicknameCk: true }));
+      })
+      .catch((err) => {
+        let errMsg = err.response?.data?.message;
+        if (errMsg) {
+          setChecked((prev) => ({ ...prev, nicknameCk: false }));
+          return setMessage((prev) => ({
+            ...prev,
+            nicknameMsg: errMsg,
+          }));
+        }
+        return alert('서버 에러: 닉네임 중복 검사 요청 실패');
+      });
   };
 
   const handleSignup = (e) => {
-    e.preventDefault();
     const { email, password, phone, nickname } = userInfo;
     const { emailCk, passwordCk, phoneCk, nicknameCk } = checked;
 
@@ -413,9 +419,17 @@ function Signup() {
         });
     }
   };
+
+  useEffect(() => {
+    handlePwdReCheck();
+  }, [userInfo?.password, rePwd]);
+
+  useEffect(() => {
+    if (isLogin) navigate('/main');
+  }, []);
+
   return (
     <EntireContainer>
-      {/* <SignupContainer> */}
       <SignupFormContainer>
         <SignupFormLeft>
           <h1>Info-Market</h1>
@@ -426,23 +440,23 @@ function Signup() {
               id="user"
               type="radio"
               name="role"
-              value="일반"
+              defaultValue="일반"
               checked={role === '일반'}
               onChange={handleRoleCheck}
             />
-            <label for="user" style={{ marginRight: '15px' }}>
+            <label htmlFor="user" style={{ marginRight: '15px' }}>
               일반
             </label>
             <input
               id="admin"
               type="radio"
               name="role"
-              value="관리자"
+              defaultValue="관리자"
               checked={role === '관리자'}
               onChange={handleRoleCheck}
               disabled
             />
-            <label for="admin">관리자</label>
+            <label htmlFor="admin">관리자</label>
           </div>
         </SignupFormLeft>
         <SignupFormRight>
@@ -455,7 +469,7 @@ function Signup() {
                 onChange={handleInputValue('email')}
               />
               <button className="signup-btn" onClick={handleEmailCheck}>
-                인증
+                확인
               </button>
               <Msg
                 className={checked.emailCk ? 'email-msg checked' : 'email-msg'}
@@ -473,7 +487,7 @@ function Signup() {
               <input
                 type="password"
                 placeholder="비밀번호 재확인"
-                onChange={handlePwdReCheck}
+                onChange={(e) => setRePwd(e.target.value)}
               />
               <Msg className="rePassword-msg">{message.rePasswordMsg}</Msg>
             </SignupBtnWrap>
@@ -489,7 +503,7 @@ function Signup() {
                 onClick={handlePhoneCheck}
                 disabled={role === '관리자'}
               >
-                인증번호받기
+                확인
               </button>
               <Msg
                 className={checked.phoneCk ? 'phone-msg checked' : 'phone-msg'}
@@ -511,13 +525,13 @@ function Signup() {
               >
                 중복검사
               </button>
-              <Msg className={checked.emailCk ? 'checked' : ''}>
+              <Msg className={checked.nicknameCk ? 'checked' : ''}>
                 {message.nicknameMsg}
               </Msg>
             </SignupBtnWrap>
             <SignupBtnWrap>
               <button
-                className="signup-btn"
+                className="signup-btn register"
                 type="submit"
                 onClick={handleSignup}
               >
@@ -528,7 +542,6 @@ function Signup() {
           </SignupInputContainer>
         </SignupFormRight>
       </SignupFormContainer>
-      {/* </SignupContainer> */}
     </EntireContainer>
   );
 }

@@ -8,6 +8,8 @@ const jwtToken = require("../controlloers/functions/jwtToken");
 
 module.exports = {
   me: async (req, res, next) => {
+    const isAuthCheck = req.get("IsAuthCheck");
+
     let token;
     const authHeader = req.get("Authorization");
     if (authHeader && authHeader.startsWith("Bearer ")) {
@@ -32,10 +34,22 @@ module.exports = {
           return res.status(400).json({ message: "유저가 존재하지 않습니다." });
         }
 
-        req.userId = admin.id; // 다른 유저가 내 게시물 삭제하는 것을 방지하기 위해 검증하기 위해
-        req.token = token;
-        req.grade = admin.grade; // 등급이 안되는데 상업적 게시물 올릴려고 할 때 검증하기 위해
-        next();
+        if (!isAuthCheck) {
+          req.userId = admin.id; // 다른 유저가 내 게시물 삭제하는 것을 방지하기 위해 검증하기 위해
+          req.token = token;
+          req.grade = admin.grade; // 등급이 안되는데 상업적 게시물 올릴려고 할 때 검증하기 위해
+          return next();
+        } else {
+          const { id, point, grade, nickname, phone } = admin;
+          return res.status(200).json({
+            id,
+            point,
+            grade,
+            nickname,
+            phone,
+            message: "인증된 관리자입니다.",
+          });
+        }
       } else {
         const user = await userDb.findPkUser(decoded.id);
 
@@ -43,11 +57,23 @@ module.exports = {
           return res.status(400).json({ message: "유저가 존재하지 않습니다." });
         }
 
-        req.userId = user.id; // 다른 유저가 내 게시물 삭제하는 것을 방지하기 위해 검증하기 위해
-        req.token = token;
-        req.grade = user.grade; // 등급이 안되는데 상업적 게시물 올릴려고 할 때 검증하기 위해
+        if (!isAuthCheck) {
+          req.userId = user.id; // 다른 유저가 내 게시물 삭제하는 것을 방지하기 위해 검증하기 위해
+          req.token = token;
+          req.grade = user.grade; // 등급이 안되는데 상업적 게시물 올릴려고 할 때 검증하기 위해
 
-        next();
+          return next();
+        } else {
+          const { id, point, grade, nickname, phone } = user;
+          return res.status(200).json({
+            id,
+            point,
+            grade,
+            nickname,
+            phone,
+            message: "인증된 사용자입니다.",
+          });
+        }
       }
     });
   },

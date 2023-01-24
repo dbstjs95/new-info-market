@@ -6,7 +6,7 @@ const initialState = {
   email: '',
   password: '',
   nickname: '',
-  accToken: '',
+  // accToken: '',
   point: 0,
   earnings: 0,
   grade: '',

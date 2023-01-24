@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 // import Search from '../Search';
 import { useDispatch, useSelector } from 'react-redux';
@@ -114,7 +114,7 @@ function Post({ post }) {
 }
 
 function PaidPosts() {
-  const { accToken } = useSelector(selectUserInfo);
+  const accToken = localStorage.getItem('act');
   const LIMIT = 10;
   const [page, setPage] = useState(1);
   const [totalCnt, setTotalCnt] = useState(0);
@@ -122,15 +122,17 @@ function PaidPosts() {
   const offset = page * LIMIT - LIMIT;
   const totalPage = Math.ceil(totalCnt / LIMIT) || 1;
 
-  const getConfig = {
-    headers: {
-      Authorization: `Bearer ${accToken}`,
-    },
-    withCredentials: true,
-  };
+  const getConfig = useMemo(
+    () => ({
+      headers: {
+        Authorization: `Bearer ${accToken}`,
+      },
+      withCredentials: true,
+    }),
+    [accToken],
+  );
 
-  useEffect(() => {
-    console.log(paidPostList);
+  const handlePage = useCallback(() => {
     if (paidPostList.length > offset) return;
 
     axios
@@ -140,13 +142,15 @@ function PaidPosts() {
       )
       .then((res) => {
         const { count, rows } = res.data.info;
-        console.log(rows);
+
         if (page === 1 && count) setTotalCnt(Number(count));
         if (rows && rows.length > 0)
           setPaidPostList([...paidPostList, ...rows]);
       })
       .catch((err) => err.response?.message && alert(err.response.message));
-  }, [page]);
+  }, [paidPostList, offset, page, getConfig]);
+
+  useEffect(() => handlePage(), [handlePage, page]);
 
   return (
     <EntireContainer>

@@ -98,8 +98,9 @@ const FileBox = styled.div`
 `;
 
 function Writing() {
-  const { id, accToken } = useSelector(selectUserInfo);
-  const config = {
+  const accToken = localStorage.getItem('act');
+
+  const postConfig = {
     headers: {
       'content-type': 'application/json',
       Authorization: `Bearer ${accToken}`,
@@ -139,7 +140,7 @@ function Writing() {
           content,
           file: '',
         },
-        config,
+        postConfig,
       )
       .then((res) => {
         if (res.data.infoId) alert('글이 등록되었습니다.');
@@ -178,7 +179,7 @@ function Writing() {
             ...textValues,
             file: fileName,
           },
-          config,
+          postConfig,
         )
         .then((res) => {
           setTextValues({

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import React, { useRef, useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -19,9 +19,6 @@ export const InputContainer = styled.div`
     align-items: center;
     border-bottom: 3px dotted #999;
     padding: 5px;
-    /* &:focus-within {
-      box-shadow: ${boxShadow};
-    } */
     > select,
     > input,
     > span#search-icon {
@@ -82,7 +79,7 @@ export const InputContainer = styled.div`
   }
 `;
 
-function SelectBox({ items, className, selectVal, handleSelect }) {
+function SelectBox({ items, selectVal, handleSelect }) {
   return (
     <select name="filter" value={selectVal} onChange={handleSelect}>
       {items.map(([name, value], i) => (
@@ -118,7 +115,7 @@ export default function Search({ single }) {
   }, []);
 
   const handleKeyPress = (e) => {
-    // e.preventDefault();
+    e.preventDefault();
     if (e.key === 'Enter') buttonEl.current.click();
   };
 
@@ -205,12 +202,7 @@ export default function Search({ single }) {
           onChange={(e) => setLocalIpVal(e.target.value)}
           onKeyPress={handleKeyPress}
         />
-        <span
-          id="search-icon"
-          // type="submit"
-          ref={buttonEl}
-          onClick={searchClick}
-        >
+        <span id="search-icon" ref={buttonEl} onClick={searchClick}>
           <FontAwesomeIcon icon={faMagnifyingGlass} />
         </span>
       </form>

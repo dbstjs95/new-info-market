@@ -3,7 +3,6 @@ import styled, { css } from 'styled-components';
 import Search from '../../component/Search';
 import Pagination from '../../component/Pagination';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectUserInfo } from '../../store/slices/userInfo';
 import { updateSearch, selectSearch } from '../../store/slices/search';
 import { clearPostState } from '../../store/slices/selectedPost';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -197,7 +196,7 @@ function PostList() {
     },
   );
 
-  const { accToken } = useSelector(selectUserInfo);
+  const accToken = localStorage.getItem('act');
   const { page, list } = useSelector(selectSearch);
 
   const getConfig = {

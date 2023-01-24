@@ -4,129 +4,175 @@ import styled from 'styled-components';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp } from '@fortawesome/free-regular-svg-icons';
-import { faEye, faUser } from '@fortawesome/free-solid-svg-icons';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectUserInfo } from '../../../store/slices/userInfo';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { useDispatch } from 'react-redux';
 import { clearPostState } from '../../../store/slices/selectedPost';
 import { useNavigate } from 'react-router-dom';
 
-const OrderContainer = styled.div`
-  background-color: #ccc7a9;
-  opacity: 0.9;
-  width: 100%;
-  padding: 5px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  /* box-shadow: 3px 5px 4px #75746d; */
-  > div {
-    /* border: 3px solid red; */
-    width: 50%;
-    height: 50px;
+const Outer = styled.div`
+  width: 800px;
+  margin: 0 auto;
+  * {
+    /* border: 1px solid red; */
+  }
+  @media screen and (max-width: 900px) {
+    width: 100%;
+  }
+  > div.order {
+    * {
+      font-family: '순천B';
+    }
+    background-color: #ccc7a9;
+    padding: 15px;
     display: flex;
     justify-content: space-between;
-    > span {
-      /* border: 2px solid blue; */
-      font-family: '순천B';
-      &.latest_best {
-        /* width: 250px; */
-        /* padding: 3% 2%; */
-        /* margin-left: -5px; */
-        min-width: 30%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        > input {
-          display: none;
+    align-items: center;
+    border-radius: 5px;
+    > p:first-of-type {
+      > span {
+        border-radius: 5px;
+        padding: 18px;
+        cursor: pointer;
+        &:first-of-type {
+          margin-right: 10px;
+        }
+        &:hover {
+          box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.2);
+        }
+        &.clicked {
+          background-color: #69675c;
+          box-shadow: 3px 2px 4px #3b3a37;
+          color: white;
         }
       }
-
-      &.count {
-        display: flex;
-        align-items: center;
+    }
+    @media screen and (max-width: 480px) {
+      padding: 13px;
+      * {
+        font-size: 0.9rem;
       }
-
-      > label {
-        font-family: '순천B';
-        font-size: 1rem;
-        /* border: 1px solid red; */
-        height: 100%;
-        /* padding: 0 3%; */
-        display: flex;
-        width: 50%;
-        align-items: center;
-        justify-content: center;
-        border-radius: 5px;
-      }
-      > label.clicked {
-        background-color: #69675c;
-        box-shadow: 3px 5px 4px #3b3a37;
-        color: white;
-        font-size: 1rem;
+      > p:first-of-type {
+        > span {
+          padding: 15px;
+          &:first-of-type {
+            margin-right: 7px;
+          }
+        }
       }
     }
   }
 `;
 
-const EntireContainer = styled.div`
-  display: flex;
-  /* background-color: #faf9f5; */
-  flex-direction: column;
-  align-items: center;
+const EntireContainer = styled.ul`
+  padding: 30px 15px;
   height: 800px;
   overflow-y: scroll;
-  > ul.postList {
-    /* border: 3px solid red; */
-    margin: 0;
-    list-style: none;
-    padding: 0;
-    width: 50%;
-    height: 1200px;
-    padding: 1%;
-    > li.post {
-      border: 1px solid black;
-      background-color: white;
-      width: 100%;
-      &:not(:last-child) {
-        margin-bottom: 15px;
+  -ms-overflow-style: none; /* 인터넷 익스플로러 */
+  scrollbar-width: none; /* 파이어폭스 */
+  &::-webkit-scrollbar {
+    display: none; /* 크롬, 사파리, 오페라, 엣지 */
+  }
+  > li.post {
+    box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.3);
+    background-color: #f9fae3;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.2s linear;
+    &:not(:last-child) {
+      margin-bottom: 20px;
+    }
+    &:hover {
+      transform: scale(101%);
+      box-shadow: 1px 1px 3px 3px rgba(0, 0, 0, 0.3);
+      z-index: 1;
+    }
+    > div.writer_createdAt {
+      padding: 5px 10px;
+      display: flex;
+      justify-content: space-between;
+      * {
+        font-size: 0.9rem;
       }
-      > div.writer_createdAt {
-        /* border: 1px dotted black; */
-        padding: 5px;
-        display: flex;
-        justify-content: space-between;
-        > span {
-          /* border: 2px dotted purple; */
-          &.writer {
-            > span.icon {
-              margin-right: 10px;
-            }
+      > span {
+        &.writer {
+          color: #705e06;
+          > span.icon {
+            margin-right: 10px;
           }
-          &.createdAt {
+        }
+        &.createdAt {
+          color: #444;
+        }
+      }
+    }
+    > div.title {
+      font-family: '순천B';
+      border: 1px solid lightgray;
+      box-shadow: 2px 2px 2px lightgray;
+      padding: 10px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      color: #333;
+      &:hover {
+        color: crimson;
+      }
+    }
+    > div.likes_views {
+      font-size: 0.9rem;
+      color: #444;
+      padding: 7px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      > span {
+        &.likes {
+          margin-right: 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          > span.text {
+            margin-left: 4px;
+          }
+        }
+        &.views {
+          > em {
+            font-weight: bold;
           }
         }
       }
-      > p.title {
-        border: 1px solid lightgray;
-        box-shadow: 2px 2px 2px lightgray;
-        margin: 0;
-        padding: 5px;
-        margin-top: 3px;
-        margin-bottom: 2px;
-        display: inline-block;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-        width: 100%;
+    }
+    > div.likes_views_point {
+      font-size: 0.9rem;
+      color: #444;
+      padding: 7px 10px;
+      display: flex;
+      justify-content: space-between; // 다름.
+      align-items: center;
+      > .left {
+        font-weight: bold;
+        /* background-color: #ba931c; */
+        background-color: #c99c12;
+        color: white;
+        padding: 5px 5px 2px;
+        border-radius: 3px;
       }
-      > div.total_Likes_Views {
-        /* border: 1px dotted black; */
-        padding: 5px;
+      > .right {
         display: flex;
-        justify-content: space-between;
         > span {
-          /* border: 1px dotted orange; */
-          &.totalLikes {
+          &.likes {
+            margin-right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            > span.text {
+              margin-left: 4px;
+            }
+          }
+          &.views {
+            > em {
+              font-weight: bold;
+            }
           }
         }
       }
@@ -134,7 +180,7 @@ const EntireContainer = styled.div`
   }
 `;
 
-function Post({ post }) {
+function Post({ post, paid }) {
   const {
     id: postId,
     title,
@@ -145,13 +191,14 @@ function Post({ post }) {
     createdAt,
     updatedAt,
     userId,
+    targetPoint,
   } = post;
 
   const navigate = useNavigate();
   const day = createdAt.split('T')[0];
 
   return (
-    <li className="post">
+    <li className="post" onClick={() => navigate(`/main/search/${postId}`)}>
       <div className="writer_createdAt">
         <span className="writer">
           <span className="icon">
@@ -161,43 +208,51 @@ function Post({ post }) {
         </span>
         <span className="createdAt">{day}</span>
       </div>
-      <p
-        className="title"
-        style={{ cursor: 'pointer' }}
-        onClick={() => navigate(`/main/search/${postId}`)}
-      >
-        {title}
-      </p>
-      <div className="total_Likes_Views">
-        <span className="totalLikes">
-          <FontAwesomeIcon icon={faThumbsUp} /> {totalLikes}
-        </span>
-        <span className="totalViews">
-          <FontAwesomeIcon icon={faEye} /> {totalViews}
-        </span>
-      </div>
+      <div className="title">{title}</div>
+      {paid ? (
+        <div className="likes_views_point">
+          <div className="left">{targetPoint} P</div>
+          <div className="right">
+            <span className="likes">
+              <FontAwesomeIcon icon={faThumbsUp} />
+              <span className="text">{totalLikes}</span>
+            </span>
+            <span className="views">
+              <em>view</em> {totalViews}
+            </span>
+          </div>
+        </div>
+      ) : (
+        <div className="likes_views">
+          <span className="likes">
+            <FontAwesomeIcon icon={faThumbsUp} />
+            <span className="text">{totalLikes}</span>
+          </span>
+          <span className="views">
+            <em>view</em> {totalViews}
+          </span>
+        </div>
+      )}
     </li>
   );
 }
 
-function FreeBoard() {
+function FreeBoard({ paid }) {
   const dispatch = useDispatch();
-  const { accToken } = useSelector(selectUserInfo);
-  const [list, setList] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalCnt, setTotalCnt] = useState(0);
-  const [order, setOrder] = useState('최신순');
-  const LIMIT = 10;
-  const elm = useRef(null);
+  const accToken = localStorage.getItem('act');
 
-  //서버 통신 헤더: post용, get용
-  const postConfig = {
-    headers: {
-      'content-type': 'application/json',
-      Authorization: `Bearer ${accToken}`,
-    },
-    withCredentials: true,
+  const elm = useRef(null);
+  const LIMIT = 10;
+  const InitialObj = {
+    page: 1,
+    order: '최신순',
   };
+
+  const [typeState, setTypeState] = useState(paid ? 'paid' : 'free');
+  const [list, setList] = useState([]);
+  const [totalCnt, setTotalCnt] = useState(0);
+  const [pagingInfo, setPagingInfo] = useState(InitialObj);
+
   const getConfig = {
     headers: {
       Authorization: `Bearer ${accToken}`,
@@ -205,18 +260,32 @@ function FreeBoard() {
     withCredentials: true,
   };
 
-  useEffect(() => {
-    dispatch(clearPostState());
+  const handleScroll = (e) => {
+    if (e.target.clientHeight + e.target.scrollTop === e.target.scrollHeight)
+      setPagingInfo((prev) => ({ ...prev, page: prev.page + 1 }));
+  };
+
+  const handleOrder = (val) => {
+    setList(() => []);
+    setTotalCnt(() => 0);
+    setPagingInfo(() => ({ page: 1, order: val }));
+  };
+
+  const getInfoList = (infoObj) => {
+    let { page, order } = infoObj;
     if (totalCnt && list.length >= totalCnt) return;
     const params = {
-      info_type: 'Free',
+      info_type: paid ? 'Paid' : 'Free',
       pages: page,
       limit: LIMIT,
       like_type: order === '인기순',
       lastId: list[list.length - 1]?.id || 0,
     };
+
     // /info/free/list
-    const infoURL = `${process.env.REACT_APP_SERVER_DEV_URL}/info/free/list`;
+    const infoURL = `${process.env.REACT_APP_SERVER_DEV_URL}/info/${
+      paid ? 'paid' : 'free'
+    }/list`;
 
     axios
       .get(infoURL, {
@@ -225,69 +294,58 @@ function FreeBoard() {
       })
       .then((res) => {
         const { rows, count } = res.data.info;
-        if (rows) setList([...list, ...rows]);
-        if (count && page === 1) {
+        if (rows) setList((prev) => [...prev, ...rows]);
+        if (page === 1) {
           setTotalCnt(count);
         }
       })
       .catch((err) => {
-        if (err.response?.message) alert(err.response.message);
+        let errMsg = err.response?.data?.message;
+        if (errMsg) alert(errMsg);
       });
-  }, [page, order]);
-
-  const handleScroll = (e) => {
-    if (e.target.clientHeight + e.target.scrollTop === e.target.scrollHeight)
-      setPage((prevState) => prevState + 1);
   };
 
-  const handleChange = (e) => {
-    setOrder(e.target.value);
-    setList([]);
-    setPage(1);
-  };
+  useEffect(() => {
+    dispatch(clearPostState());
+
+    let type = paid ? 'paid' : 'free';
+    // paid 의존성으로 트리거된 거라면,
+    if (typeState !== type) {
+      setTypeState(type);
+      setList([]);
+      setTotalCnt(0);
+      setPagingInfo((prev) => ({ page: 1, order: '최신순' }));
+    } else {
+      getInfoList(pagingInfo);
+    }
+  }, [paid, pagingInfo]);
 
   return (
-    <>
-      <OrderContainer>
-        <div>
-          <span className="latest_best">
-            <input
-              id="latest"
-              className="latest"
-              type="radio"
-              name="info_order"
-              value="최신순"
-              checked={order === '최신순'}
-              onChange={handleChange}
-            />
-            <label for="latest" className={order === '최신순' && 'clicked'}>
-              최신순
-            </label>
-            <input
-              id="best"
-              className="best"
-              type="radio"
-              name="info_order"
-              value="인기순"
-              checked={order === '인기순'}
-              onChange={handleChange}
-            />
-            <label for="best" className={order === '인기순' && 'clicked'}>
-              인기순
-            </label>
+    <Outer>
+      <div className="order">
+        <p>
+          <span
+            className={pagingInfo?.order === '최신순' ? 'clicked' : ''}
+            onClick={() => handleOrder('최신순')}
+          >
+            최신순
           </span>
-          <span className="count">총 게시물 수 : {totalCnt || 0}</span>
-        </div>
-      </OrderContainer>
+          <span
+            className={pagingInfo?.order === '인기순' ? 'clicked' : ''}
+            onClick={() => handleOrder('인기순')}
+          >
+            인기순
+          </span>
+        </p>
+        <p className="count">total: {totalCnt || 0}</p>
+      </div>
       <EntireContainer id="box" ref={elm} onScroll={handleScroll}>
-        <ul className="postList">
-          {list.map((post) => (
-            <Post key={post.id} post={post} />
-          ))}
-          {/*{isLoading && <Loading/>}*/}
-        </ul>
+        {list?.map((post, idx) => (
+          <Post key={idx} post={post} paid={paid} />
+        ))}
+        {/*{isLoading && <Loading/>}*/}
       </EntireContainer>
-    </>
+    </Outer>
   );
 }
 

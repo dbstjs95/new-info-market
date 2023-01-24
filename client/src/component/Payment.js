@@ -11,11 +11,12 @@ import { v4 } from 'uuid';
 
 const Payment = (effect, deps) => {
   const dispatch = useDispatch();
-  const { paymentInput, modalOpen } = useSelector(selectPoint);
-  const { accToken, point } = useSelector(selectUserInfo);
+  const { paymentInput } = useSelector(selectPoint);
+  const { point } = useSelector(selectUserInfo);
+  const accToken = localStorage.getItem('act');
   const { amount, buyer_tel, buyer_email } = paymentInput;
 
-  const config = {
+  const postConfig = {
     headers: {
       'content-type': 'application/json',
       Authorization: `Bearer ${accToken}`,
@@ -80,7 +81,7 @@ const Payment = (effect, deps) => {
             amount: paid_amount,
             status,
           },
-          config,
+          postConfig,
         )
         .then((res) => {
           dispatch(updateState({ point: Number(point) + Number(amount) }));

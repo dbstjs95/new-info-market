@@ -31,10 +31,10 @@ const PopUpBox = styled.ul`
   }
 `;
 
-function Setting({ setAgain }) {
+function Setting() {
   const dispatch = useDispatch();
 
-  const { grade, isLogin, id: userId, accToken } = useSelector(selectUserInfo);
+  const { grade, isLogin, id: userId } = useSelector(selectUserInfo);
   const { id: infoId, userId: writer } = useSelector(selectSelectedPost);
 
   return (

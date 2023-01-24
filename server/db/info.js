@@ -277,12 +277,32 @@ async function editInfoFile(infoId, file) {
   );
 }
 
-async function findFreeInfo(pages, limit, like, cursor) {
+async function findFreeInfo(pages, limit, like_type, activate, cursor) {
+  let customOffset = like_type ? (pages - 1) * 10 : 0;
+  let customOrder = like_type
+    ? [
+        ["totalLikes", "desc"],
+        ["createdAt", "asc"],
+      ]
+    : [
+        ["createdAt", "desc"],
+        ["id", "desc"],
+      ];
+
+  let customWhere = like_type
+    ? {
+        type: "Free",
+        activate,
+      }
+    : {
+        id: { [Op.lt]: cursor },
+        type: "Free",
+        activate,
+      };
+
   return await Info.findAndCountAll({
-    order: [
-      ["createdAt", "desc"],
-      ["totalLikes", like],
-    ],
+    offset: customOffset,
+    order: customOrder,
     limit,
     attributes: [
       "id",
@@ -304,20 +324,36 @@ async function findFreeInfo(pages, limit, like, cursor) {
         attributes: [],
       },
     ],
-    where: {
-      id: { [Op.lt]: cursor },
-
-      type: "Free",
-    },
+    where: customWhere,
   });
 }
 
 async function findPaidInfo(pages, limit, like_type, activate, cursor) {
+  let customOffset = like_type ? (pages - 1) * 10 : 0;
+  let customOrder = like_type
+    ? [
+        ["totalLikes", "desc"],
+        ["createdAt", "asc"],
+      ]
+    : [
+        ["createdAt", "desc"],
+        ["id", "desc"],
+      ];
+
+  let customWhere = like_type
+    ? {
+        type: "Paid",
+        activate,
+      }
+    : {
+        id: { [Op.lt]: cursor },
+        type: "Paid",
+        activate,
+      };
+
   return await Info.findAndCountAll({
-    order: [
-      ["createdAt", "desc"],
-      ["totalLikes", like_type],
-    ],
+    offset: customOffset,
+    order: customOrder,
     limit,
     attributes: [
       "id",
@@ -339,11 +375,7 @@ async function findPaidInfo(pages, limit, like_type, activate, cursor) {
         attributes: [],
       },
     ],
-    where: {
-      id: { [Op.lt]: cursor },
-      activate,
-      type: "Paid",
-    },
+    where: customWhere,
   });
 }
 

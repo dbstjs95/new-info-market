@@ -17,7 +17,6 @@ import UserInfo from './component/MypageCompo/UserInfo';
 import Mypage from './pages/user/Mypage';
 import Mainpage from './pages/user/Mainpage';
 import FreeBoard from './pages/content/contentBoard/FreeBoard';
-import PaidBoard from './pages/content/contentBoard/PaidBoard';
 import PostList from './pages/user/PostList';
 import Post from './pages/user/Post';
 import './App.css';
@@ -40,7 +39,7 @@ function App() {
           </Route>
           {/* 유료게시글, 무료게시글 */}
           <Route path="freeboard" element={<FreeBoard />} />
-          <Route path="paidboard" element={<PaidBoard />} />
+          <Route path="paidboard" element={<FreeBoard paid={true} />} />
           <Route path="mypage" element={<SideBar />}>
             <Route index element={<Mypage />} />
             <Route path="info" element={<UserInfo />}>

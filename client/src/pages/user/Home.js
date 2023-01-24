@@ -6,6 +6,207 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import homeLast from '../../images/homeLast.jpeg';
 
+const EntireContainer = styled.div`
+  * {
+    font-family: 'Elice Bold';
+    font-family: '순천B';
+  }
+`;
+
+const IntroContainer = styled.div`
+  height: 100vh;
+  background: linear-gradient(-45deg, #fff, #c2c8c6, #5b8191, #7b7886);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  display: flex;
+  align-items: center;
+  align-content: center;
+  > div.floater {
+    flex: 1 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #3d261a;
+    > div.title {
+      flex: 1 0 auto;
+      font-size: 3em;
+      font-weight: bold;
+      margin-bottom: 0.25em;
+    }
+    > div.desc {
+      inline-size: 13em;
+      flex: 1 0 auto;
+      font-size: 2em;
+      max-width: 60vw;
+      margin-bottom: 1em;
+    }
+    > div.action {
+      flex: 1 0 auto;
+      > button {
+        font-size: 1.4em;
+        padding: 0.8em 1em;
+        border-radius: 2em;
+        border-style: hidden;
+        background-color: rgba(255, 255, 255, 0.4);
+        cursor: pointer;
+      }
+      > button:hover {
+        font-weight: bold;
+        background-color: rgba(255, 255, 255, 0.6);
+      }
+    }
+
+    @media screen and (max-width: 600px) {
+      > div.title {
+        font-size: 2.5em;
+      }
+      > div.desc {
+        font-size: 1.7em;
+      }
+      > div.action > button {
+        font-size: 1.2em;
+      }
+    }
+    @media screen and (max-width: 500px) {
+      > div.title {
+        font-size: 2.3em;
+      }
+      > div.desc {
+        font-size: 1.4em;
+      }
+      > div.action > button {
+        font-size: 1em;
+      }
+    }
+    @media screen and (max-width: 380px) {
+      > div.title {
+        font-size: 2em;
+      }
+      > div.desc {
+        font-size: 1.2em;
+      }
+    }
+  }
+`;
+
+const FeatureContainer = styled.div`
+  padding: 10rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  background-color: #f3f5f7;
+  border-bottom: solid lightgrey 1px;
+  gap: 2rem;
+  > img {
+    min-width: 500px;
+    width: 40%;
+    border: solid lightgrey 1px;
+    border-radius: 8px;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.5);
+    @media screen and (max-width: 600px) {
+      min-width: 400px;
+    }
+    @media screen and (max-width: 480px) {
+      min-width: 80%;
+    }
+    @media screen and (max-width: 400px) {
+      min-width: 90%;
+    }
+  }
+  > div.section {
+    max-width: 500px;
+    max-height: 300px;
+    word-break: keep-all;
+    div.heading {
+      color: #4e453c;
+      font-size: 3rem;
+      font-weight: 700;
+      inline-size: 10em;
+      line-height: 1.5em;
+    }
+    div.sub {
+      margin: 0.3em 0;
+      color: #7f5a34;
+      font-size: 1.5em;
+      inline-size: 20em;
+      line-height: 1.5em;
+    }
+    @media screen and (max-width: 600px) {
+      div.heading {
+        font-size: 2rem;
+      }
+      div.sub {
+        font-size: 1.3rem;
+      }
+    }
+    @media screen and (max-width: 500px) {
+      div.heading {
+        font-size: 1.8rem;
+      }
+      div.sub {
+        font-size: 1.2rem;
+      }
+    }
+    @media screen and (max-width: 450px) {
+      div.heading {
+        font-size: 1.6rem;
+      }
+      div.sub {
+        font-size: 1.1rem;
+      }
+    }
+    @media screen and (max-width: 380px) {
+      padding: 5px;
+      div.heading {
+        font-size: 1.3rem;
+      }
+      div.sub {
+        font-size: 0.9rem;
+      }
+    }
+  }
+`;
+
+const FeatureContainer2 = styled(FeatureContainer)`
+  background-color: white;
+`;
+
+const OutroContainer = styled(IntroContainer)`
+  height: 40vh;
+  > div.floater {
+    > div.title {
+      font-size: 2em;
+    }
+    > div.action {
+      > button:first-of-type {
+        margin-right: 1.2em;
+      }
+      @media screen and (max-width: 400px) {
+        display: flex;
+        flex-direction: column;
+        > button:first-of-type {
+          margin-right: 0;
+          margin-bottom: 1em;
+        }
+      }
+    }
+  }
+`;
+
 function Home() {
   const navigate = useNavigate();
 
@@ -15,207 +216,6 @@ function Home() {
   const handleLogin = () => {
     navigate(`/login`);
   };
-
-  const EntireContainer = styled.div`
-    * {
-      font-family: 'Elice Bold';
-      font-family: '순천B';
-    }
-  `;
-
-  const IntroContainer = styled.div`
-    height: 100vh;
-    background: linear-gradient(-45deg, #fff, #c2c8c6, #5b8191, #7b7886);
-    background-size: 400% 400%;
-    animation: gradient 15s ease infinite;
-    @keyframes gradient {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
-    }
-    display: flex;
-    align-items: center;
-    align-content: center;
-    > div.floater {
-      flex: 1 0 auto;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: #3d261a;
-      > div.title {
-        flex: 1 0 auto;
-        font-size: 3em;
-        font-weight: bold;
-        margin-bottom: 0.25em;
-      }
-      > div.desc {
-        inline-size: 13em;
-        flex: 1 0 auto;
-        font-size: 2em;
-        max-width: 60vw;
-        margin-bottom: 1em;
-      }
-      > div.action {
-        flex: 1 0 auto;
-        > button {
-          font-size: 1.4em;
-          padding: 0.8em 1em;
-          border-radius: 2em;
-          border-style: hidden;
-          background-color: rgba(255, 255, 255, 0.4);
-          cursor: pointer;
-        }
-        > button:hover {
-          font-weight: bold;
-          background-color: rgba(255, 255, 255, 0.6);
-        }
-      }
-
-      @media screen and (max-width: 600px) {
-        > div.title {
-          font-size: 2.5em;
-        }
-        > div.desc {
-          font-size: 1.7em;
-        }
-        > div.action > button {
-          font-size: 1.2em;
-        }
-      }
-      @media screen and (max-width: 500px) {
-        > div.title {
-          font-size: 2.3em;
-        }
-        > div.desc {
-          font-size: 1.4em;
-        }
-        > div.action > button {
-          font-size: 1em;
-        }
-      }
-      @media screen and (max-width: 380px) {
-        > div.title {
-          font-size: 2em;
-        }
-        > div.desc {
-          font-size: 1.2em;
-        }
-      }
-    }
-  `;
-
-  const FeatureContainer = styled.div`
-    padding: 10rem 0;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    z-index: 1;
-    background-color: #f3f5f7;
-    border-bottom: solid lightgrey 1px;
-    gap: 2rem;
-    > img {
-      min-width: 500px;
-      width: 40%;
-      border: solid lightgrey 1px;
-      border-radius: 8px;
-      box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.5);
-      @media screen and (max-width: 600px) {
-        min-width: 400px;
-      }
-      @media screen and (max-width: 480px) {
-        min-width: 80%;
-      }
-      @media screen and (max-width: 400px) {
-        min-width: 90%;
-      }
-    }
-    > div.section {
-      max-width: 500px;
-      max-height: 300px;
-      word-break: keep-all;
-      div.heading {
-        color: #4e453c;
-        font-size: 3rem;
-        font-weight: 700;
-        inline-size: 10em;
-        line-height: 1.5em;
-      }
-      div.sub {
-        margin: 0.3em 0;
-        color: #7f5a34;
-        font-size: 1.5em;
-        inline-size: 20em;
-        line-height: 1.5em;
-      }
-      @media screen and (max-width: 600px) {
-        div.heading {
-          font-size: 2rem;
-        }
-        div.sub {
-          font-size: 1.3rem;
-        }
-      }
-      @media screen and (max-width: 500px) {
-        div.heading {
-          font-size: 1.8rem;
-        }
-        div.sub {
-          font-size: 1.2rem;
-        }
-      }
-      @media screen and (max-width: 450px) {
-        div.heading {
-          font-size: 1.6rem;
-        }
-        div.sub {
-          font-size: 1.1rem;
-        }
-      }
-      @media screen and (max-width: 380px) {
-        padding: 5px;
-        div.heading {
-          font-size: 1.3rem;
-        }
-        div.sub {
-          font-size: 0.9rem;
-        }
-      }
-    }
-  `;
-
-  const FeatureContainer2 = styled(FeatureContainer)`
-    background-color: white;
-  `;
-
-  const OutroContainer = styled(IntroContainer)`
-    height: 40vh;
-    > div.floater {
-      > div.title {
-        font-size: 2em;
-      }
-      > div.action {
-        > button:first-of-type {
-          margin-right: 1.2em;
-        }
-        @media screen and (max-width: 400px) {
-          display: flex;
-          flex-direction: column;
-          > button:first-of-type {
-            margin-right: 0;
-            margin-bottom: 1em;
-          }
-        }
-      }
-    }
-  `;
 
   return (
     <EntireContainer>

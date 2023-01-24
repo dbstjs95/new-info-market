@@ -92,11 +92,18 @@ const EntireContainer = styled.div`
 `;
 
 function UserInfoChange() {
-  const { isLogin, id, email, password, nickname, accToken, phone } =
+  const { isLogin, id, email, password, nickname, phone } =
     useSelector(selectUserInfo);
+  const accToken = localStorage.getItem('act');
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const getConfig = {
+    headers: {
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
   const postConfig = {
     headers: {
       'content-type': 'application/json',
@@ -144,10 +151,6 @@ function UserInfoChange() {
   useEffect(() => {
     if (!isLogin) navigate('/main');
   }, [isLogin]);
-
-  useEffect(() => {
-    console.log('inputVal: ', inputVal);
-  }, [inputVal]);
 
   //이메일 값에 따른 에러메세지 상태 변화
   const emailCheck = (inputEmail) => {
@@ -336,19 +339,11 @@ function UserInfoChange() {
     // }
     // resultObj = {...tempObj}
 
-    const config = {
-      headers: {
-        'content-type': 'application/json',
-        Authorization: `Bearer ${accToken}`,
-      },
-      withCredentials: true,
-    };
-
     axios
       .put(
         `${process.env.REACT_APP_SERVER_DEV_URL}/users/userInfo/${id}`,
         resultObj,
-        config,
+        postConfig,
       )
       .then((res) => {
         dispatch(updateState(resultObj));
@@ -362,12 +357,7 @@ function UserInfoChange() {
   const handleWithdrawal = (e) => {
     e.preventDefault();
     axios
-      .delete(`${process.env.REACT_APP_SERVER_DEV_URL}/auth/${id}`, {
-        headers: {
-          Authorization: `Bearer ${accToken}`,
-        },
-        withCredentials: true,
-      })
+      .delete(`${process.env.REACT_APP_SERVER_DEV_URL}/auth/${id}`, getConfig)
       .then((res) => dispatch(clearState()))
       .catch((err) => alert('서버 에러 발생! 다시 시도해주세요.'));
   };

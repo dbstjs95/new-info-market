@@ -24,13 +24,6 @@ const EntireContainer = styled.div`
   box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 00 1px 3px rgba(0, 0, 0, 0.88);
 `;
 
-const PageContainer = styled.div`
-  /* width: 100vw; */
-  border: 1px solid blue;
-  height: 90vh;
-  background: whitesmoke;
-`;
-
 const LoginFormContainer = styled.div`
   background: #f5f5f5;
   width: 60%;
@@ -160,6 +153,7 @@ const CreateBtn = styled.button`
   border: 0;
   font-size: 11px;
   color: #2178ff;
+  cursor: pointer;
 `;
 
 const LoginInputContainer = styled.div`
@@ -169,7 +163,6 @@ const LoginInputContainer = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 2px;
-  /* border: 1px solid red; */
   > input {
     background: none;
     border: none;
@@ -177,11 +170,9 @@ const LoginInputContainer = styled.div`
     padding-left: 10px;
     width: 267px;
     border-bottom: 1px solid black;
+    outline: none;
     &:first-of-type {
       margin-bottom: 15px;
-    }
-    &:focus {
-      outline: none;
     }
   }
   @media screen and (max-width: 400px) {
@@ -197,7 +188,6 @@ const LoginInputContainer = styled.div`
 const LoginInputWrap = styled.div`
   width: 300px;
   height: 30px;
-  /* margin-top: 20px; */
   border-radius: 2px;
   > i {
     color: #707274;
@@ -210,18 +200,13 @@ const LoginInputWrap = styled.div`
     padding-left: 10px;
     width: 267px;
     border-bottom: 1px solid black;
-  }
-  > input::focus {
     outline: none;
   }
 `;
 
 const LoginBtnWrap = styled.div`
   width: 100%;
-  padding-top: 30px;
-  /* display: flex;
-  flex-direction: column;
-  align-items: center; */
+  padding-top: 50px;
   > .login-btn {
     width: 100%;
     padding: 10px 0;
@@ -298,6 +283,7 @@ function Login() {
         )
         .then((res) => {
           if (res.data) {
+            window.localStorage.setItem('act', res.data?.accToken);
             dispatch(
               updateState({
                 ...res.data,
@@ -389,7 +375,6 @@ function Login() {
               </button>
             </div> */}
           <LoginInputContainer>
-            {/* <LoginInputWrap> */}
             <input
               type="email"
               placeholder="email을 입력하세요"
@@ -426,7 +411,6 @@ function Login() {
                 </div>
               ) : null}
             </LoginBtnWrap>
-            {/* </LoginInputWrap> */}
           </LoginInputContainer>
         </LoginFormRight>
       </LoginFormContainer>

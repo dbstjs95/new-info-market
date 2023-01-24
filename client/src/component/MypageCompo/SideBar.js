@@ -66,7 +66,7 @@ const EntireContainer = styled.div`
 const SideBar = () => {
   const { grade } = useSelector(selectUserInfo);
 
-  const links = [
+  const linkList = [
     ['회원 정보 수정', '/mypage/info/change', 'faGear'],
     ['내 글 보기', '/mypage/info/myposts', ''],
     ['구매 내역', '/mypage/info/paidPosts', ''],
@@ -75,15 +75,23 @@ const SideBar = () => {
     ['무료글 작성', '/mypage/freeWriting', ''],
   ];
 
+  const [Links, setLinks] = useState(linkList);
+
   //아래 Bronze는 나중에 빼기
-  if (['Bronze', 'Silver', 'Gold'].includes(grade))
-    links.push(['유료글 작성', '/mypage/salesWriting', '']);
+  useEffect(() => {
+    if (['Bronze', 'Silver', 'Gold'].includes(grade)) {
+      setLinks((prev) => [
+        ...prev,
+        ['유료글 작성', '/mypage/salesWriting', ''],
+      ]);
+    }
+  }, []);
 
   return (
     <EntireContainer>
       <div>
         <section>
-          {links.map(([item, link, icon], idx) => (
+          {Links.map(([item, link, icon], idx) => (
             <NavLink
               key={idx}
               style={{ whiteSpace: 'nowrap' }}
