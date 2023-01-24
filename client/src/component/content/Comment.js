@@ -41,6 +41,7 @@ const RegisterBox = styled.div`
     border-radius: 4px;
     background: linear-gradient(162deg, #757677 0%, #888e97 70%, #a5a8ad 70%);
     margin: 0 10px;
+    cursor: pointer;
   }
 `;
 
@@ -92,23 +93,22 @@ const RightBtns = styled.div`
 // UserInfoWrapper 에 margin : auto, button1(수정) 에 margin-left : auto 설정
 const Button1 = styled.button`
   border: 0;
-  /* height: 20px; */
   background: none;
   display: none;
-  margin-left: auto;
+  color: gray;
+  margin-right: 10px;
+  font-size: 0.8rem;
+  cursor: pointer;
   &.authorized {
     display: inline-block;
+  }
+  &:hover {
+    color: #333;
   }
 `;
 
-const Button2 = styled.button`
-  border: 0;
-  /* height: 20px; */
-  background: none;
-  display: none;
-  &.authorized {
-    display: inline-block;
-  }
+const Button2 = styled(Button1)`
+  margin: 0;
 `;
 
 const CommentText = styled.textarea``;
