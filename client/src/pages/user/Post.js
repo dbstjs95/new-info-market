@@ -35,7 +35,6 @@ function Post() {
       )
       .then((res) => {
         const { info, like, isPurchased } = res.data;
-        console.log('게시물 상세: ', info);
         dispatch(
           updatePostState({
             ...info,

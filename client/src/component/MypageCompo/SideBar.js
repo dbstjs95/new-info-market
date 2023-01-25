@@ -33,14 +33,17 @@ const EntireContainer = styled.div`
       left: 105%;
       display: flex;
       align-items: center;
-      background-color: #ac19bf;
-      color: white;
+      color: #ac19bf;
       font-size: 1.2rem;
       padding: 10px;
       cursor: pointer;
       z-index: 1000;
-      &:hover {
-        box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.3);
+      &.open {
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+        border-radius: 5px;
+        &:hover {
+          box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.1);
+        }
       }
     }
     > a {
@@ -85,7 +88,7 @@ const SideBar = () => {
     ['유료글 작성', '/mypage/salesWriting', ''],
   ];
 
-  const [MenuOpen, setMenuOpen] = useState(true);
+  const [MenuOpen, setMenuOpen] = useState(false);
 
   const handleSideBar = () => {
     setMenuOpen((prev) => !prev);
@@ -94,7 +97,7 @@ const SideBar = () => {
   return (
     <EntireContainer>
       <section className={MenuOpen ? 'show' : 'hide'}>
-        <span onClick={handleSideBar}>
+        <span onClick={handleSideBar} className={MenuOpen ? '' : 'open'}>
           <FontAwesomeIcon icon={MenuOpen ? faXmark : faBars} />
         </span>
         {linkList.map(([item, link, icon], idx) => {

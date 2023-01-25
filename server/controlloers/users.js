@@ -140,9 +140,6 @@ module.exports = {
       Number(limit),
       state
     );
-
-    console.log("findOrders: ", findOrders);
-
     if (findOrders.count === 0) {
       return res.status(400).json({ message: "구매한 게시물이 없습니다." });
     }
@@ -205,6 +202,7 @@ module.exports = {
     }
 
     const paidPoint = await pointDb.findUserPaidbyUserId(Number(userId));
+    console.log("paidPoint: ", paidPoint);
 
     if (!paidPoint) {
       return res

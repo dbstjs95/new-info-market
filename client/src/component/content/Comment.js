@@ -49,6 +49,7 @@ const RegisterBox = styled.div`
 const CommentWrapper = styled.div`
   * {
     font-family: '순천R';
+    /* border: 1px solid green; */
   }
   background-color: white;
   font-size: 0.9rem;
@@ -87,6 +88,19 @@ const RightBtns = styled.div`
   > p.date {
     margin-left: 20px;
   }
+  > button {
+    font-size: 0.9rem;
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+    color: #777;
+    &.finish {
+      margin-right: 10px;
+    }
+    &:hover {
+      color: #333;
+    }
+  }
 `;
 
 // css 수정사항 - 수정, 삭제 버튼분할
@@ -111,18 +125,20 @@ const Button2 = styled(Button1)`
   margin: 0;
 `;
 
-const CommentText = styled.textarea``;
+const CommentText = styled.textarea`
+  width: 100%;
+  padding: 7px;
+  resize: none;
+  border-radius: 5px;
+  outline: none;
+  /* margin-top: 10px; */
+`;
 
 function Review({ review, userInfo, infoId, postConfig, getConfig }) {
   const dispatch = useDispatch();
   const textEl = useRef(null);
   const [editMode, setEditMode] = useState(false);
   const [modifyVal, setModifyVal] = useState(review.content);
-
-  useEffect(() => {
-    if (!editMode) return;
-    textEl.current.focus();
-  }, [editMode]);
 
   //댓글 수정 값
   const handleTextChange = (e) => {
@@ -175,6 +191,10 @@ function Review({ review, userInfo, infoId, postConfig, getConfig }) {
     setEditMode(false);
   };
 
+  useEffect(() => {
+    if (!editMode) return;
+    textEl.current.focus();
+  }, [editMode]);
   // const convert = (date) => date && date.split('T')[1]
 
   return (
@@ -184,11 +204,8 @@ function Review({ review, userInfo, infoId, postConfig, getConfig }) {
         <p className="nickname">{review.User.nickname}</p>
         <RightBtns>
           {editMode ? (
-            <button
-              className="modify-confirm"
-              onClick={() => chagneContent(review.id)}
-            >
-              수정 완료
+            <button className="finish" onClick={() => chagneContent(review.id)}>
+              수정완료
             </button>
           ) : (
             <Button1
@@ -202,7 +219,11 @@ function Review({ review, userInfo, infoId, postConfig, getConfig }) {
               수정
             </Button1>
           )}
-          {editMode || (
+          {editMode ? (
+            <button className="cancel" onClick={modifyCancel}>
+              취소
+            </button>
+          ) : (
             <Button2
               className={
                 (Number(review.userid) === Number(userInfo.id) ||
@@ -218,18 +239,14 @@ function Review({ review, userInfo, infoId, postConfig, getConfig }) {
         </RightBtns>
       </UserInfoWrapper>
       {editMode ? (
-        <div>
-          <CommentText
-            className="comment-text"
-            cols="30"
-            rows="20"
-            ref={textEl}
-            value={modifyVal}
-            onChange={handleTextChange}
-          />
-
-          <button onClick={modifyCancel}>취소</button>
-        </div>
+        <CommentText
+          className="comment-text"
+          cols="30"
+          rows="20"
+          ref={textEl}
+          value={modifyVal}
+          onChange={handleTextChange}
+        />
       ) : (
         <div className="rv-content">{review.content}</div>
       )}

@@ -22,83 +22,104 @@ const myBucket = new AWS.S3({
   region: REGION,
 });
 
-const WritingContainer = styled.div`
-  border: 3px solid orange;
-  background-color: white;
-  height: 80%;
-  width: 100%;
-  border-radius: 10px;
-  > form {
-    /* border: 3px solid yellow; */
-    height: 100%;
-    width: 99%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    > textarea {
-      font-size: 1rem;
-      width: 95%;
-      padding: 1%;
-      &#title {
-        margin-top: 2%;
-        margin-bottom: 2%;
-        height: 2rem;
-        /* resize: none;
-        overflow: hidden; */
-      }
-      &#content {
-        flex-grow: 1;
-      }
-    }
-    > div.submit {
-      margin-bottom: 10px;
-      display: flex;
-      width: 95%;
-      justify-content: flex-end;
-      align-items: center;
-      /* border: 1px solid green; */
-      > span.msg {
-        display: none;
-        &.alert {
-          display: inline-block;
-          color: red;
-          font-size: 0.8rem;
-        }
-      }
-      > button#submit {
-        margin-left: 2%;
-        font-size: 1rem;
-        padding: 0.5em;
-        background-color: #f5f5f5;
-        border: 1px solid gray;
-        cursor: pointer;
-        @media screen and (max-width: 1024px) {
-          font-size: 0.9rem;
-        }
-        @media screen and (max-width: 600px) {
-          font-size: 0.8rem;
-        }
-      }
-    }
+const FormContainer = styled.form`
+  /* border: 2px solid orange; */
+  * {
+    /* border: 1px solid red; */
   }
-`;
-
-const Btn = styled.button`
-  &.need {
-    display: none;
-    color: red;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  margin: 0 auto;
+  padding: 25px;
+  /* box-shadow: inset 0 0 100px rgba(113, 6, 140, 0.5); */
+  box-shadow: inset 0 0 100px rgba(133, 115, 34, 0.5);
+  border-radius: 10px;
+  > input#title,
+  > textarea#content {
+    padding: 10px;
+    border: 2px solid lightgray;
+    border-radius: 5px;
+    box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.1);
+  }
+  > input#title {
+    margin-bottom: 15px;
+  }
+  > textarea#content {
+    min-height: 400px;
+    margin-bottom: 30px;
+    resize: none;
+  }
+  > div.submit {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    > span.msg {
+      display: none;
+      &.alert {
+        display: block;
+        color: crimson;
+        font-size: 0.8rem;
+      }
+    }
+    > button#submit {
+      margin-left: 15px;
+      padding: 5px 10px;
+      background-color: #9b02a6;
+      border: 0;
+      color: white;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+      &:not(:disabled) {
+        &:hover {
+          box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.3);
+        }
+      }
+      &:disabled {
+        background-color: #caa7cc;
+        cursor: not-allowed;
+      }
+      @media screen and (max-width: 1024px) {
+        font-size: 0.9rem;
+      }
+      @media screen and (max-width: 600px) {
+        font-size: 0.8rem;
+      }
+    }
   }
 `;
 
 const FileBox = styled.div`
-  /* border: 2px solid red; */
-  width: 95%;
-  margin: 10px 0;
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  > span {
+    display: none;
+    color: #444;
+    font-size: 0.9rem;
+    margin-left: 10px;
+    border: 1px solid lightgray;
+    padding: 3px 5px;
+    background-color: whitesmoke;
+    cursor: pointer;
+    &:hover {
+      color: #222;
+      box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.1);
+    }
+    &.need {
+      display: block;
+    }
+  }
 `;
 
-function Writing() {
+function FreeWriting() {
   const accToken = localStorage.getItem('act');
+  const { isLogin } = useSelector(selectUserInfo);
+  const navigate = useNavigate();
 
   const postConfig = {
     headers: {
@@ -219,25 +240,27 @@ function Writing() {
     setSelectedFile(null);
   };
 
+  useEffect(() => {
+    if (!accToken && !isLogin) return navigate('/main');
+  }, []);
+
   return (
-    <form>
-      <textarea
+    <FormContainer>
+      <input
         name="title"
         id="title"
-        rows="1"
-        cols="1"
         placeholder="제목"
-        maxlength="100" //삭제?
-        value={textValues.title}
+        maxLength="100"
+        defaultValue={textValues.title}
         onChange={(e) =>
           setTextValues({ ...textValues, title: e.target.value })
         }
-      ></textarea>
+      />
       <textarea
         name="content"
         id="content"
         placeholder="공유할 정보에 대한 간단한 설명을 적어주세요."
-        value={textValues.content}
+        defaultValue={textValues.content}
         onChange={(e) =>
           setTextValues({ ...textValues, content: e.target.value })
         }
@@ -245,13 +268,13 @@ function Writing() {
       <FileBox className="file-upload">
         <input
           type="file"
-          // accept="image/*, .pdf, .hwp, application/vnd.ms-excel, text/plain, text/html"
+          accept="image/*, .pdf, .hwp, application/vnd.ms-excel, text/plain, text/html"
           onChange={handleInputChange}
           ref={fileInput}
         />
-        <Btn className={!selectedFile && 'need'} onClick={handleCancel}>
+        <span className={selectedFile ? 'need' : ''} onClick={handleCancel}>
           파일 취소
-        </Btn>
+        </span>
       </FileBox>
       <div className="submit">
         <span
@@ -269,22 +292,7 @@ function Writing() {
           작성 완료
         </button>
       </div>
-    </form>
-  );
-}
-
-function FreeWriting() {
-  const { isLogin } = useSelector(selectUserInfo);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isLogin) return navigate('/main');
-  }, []);
-
-  return (
-    <WritingContainer>
-      <Writing />
-    </WritingContainer>
+    </FormContainer>
   );
 }
 

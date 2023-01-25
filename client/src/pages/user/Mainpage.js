@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Search from '../../component/Search';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectUserInfo } from '../../store/slices/userInfo';
+import { useDispatch } from 'react-redux';
 import { clearPostState } from '../../store/slices/selectedPost';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';

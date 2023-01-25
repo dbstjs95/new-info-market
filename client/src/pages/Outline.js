@@ -81,7 +81,7 @@ function Outline() {
         }
       })
       .catch((err) => {
-        window.localStorage.removeItem('token');
+        window.localStorage.removeItem('act');
         dispatch(clearState());
         const { message } = err.response.data;
         if (message) alert(message);

@@ -1,109 +1,155 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleRight, faCircleLeft } from '@fortawesome/free-solid-svg-icons';
 
 const EntireContainer = styled.div`
-  border-left: 5px solid orange;
-  border-right: 3px solid orange;
-  background-color: white;
-  width: 100%;
-  height: 70%;
+  * {
+    /* border: 1px solid red; */
+  }
+`;
+const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-`;
-
-const PostContainer = styled.tr`
-  border: 3px solid lightgray;
-  > td {
-    vertical-align: middle;
-    padding: 5px;
-    border: 3px solid lightgray;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    &.title {
-      &:hover {
-        text-decoration: underline;
-        cursor: pointer;
+  justify-content: space-between;
+  min-height: 50vh;
+  padding: 10px;
+  > div#paging {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 20%;
+    min-width: 150px;
+    color: #821e9c;
+    font-weight: bold;
+    font-size: 1.1rem;
+    > button {
+      cursor: pointer;
+      background: transparent;
+      border: 0;
+      color: #821e9c;
+      font-size: 1.3rem;
+      &:disabled {
+        opacity: 0;
       }
     }
-    &.createdAt,
-    &.updatedAt {
-      white-space: normal;
-      text-overflow: clip;
+  }
+`;
+
+const Table = styled.div`
+  position: relative;
+  margin: 25px auto;
+  border-top: 2px solid #777;
+  > table {
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    thead tr th {
+      border-bottom: 1px solid #888;
+      color: #71038c;
+    }
+    tbody tr td {
+      border-bottom: 1px solid #efefef;
+      &.title {
+        word-break: break-all;
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+    thead tr th,
+    tbody tr td {
+      text-align: left;
+      padding: 10px;
+      font-size: 15px;
+      line-height: 0.9rem;
+
+      /* desktop only */
+      @media screen and (min-width: 991px) {
+        padding: 12px 20px;
+        font-size: 1rem;
+        line-height: 22px;
+      }
+    }
+
+    /* mobile only */
+    @media screen and (max-width: 680px) {
+      col {
+        width: 100% !important;
+      }
+      thead {
+        display: none;
+      }
+      tbody tr {
+        border-bottom: 1px solid #efefef;
+        td {
+          width: 100%;
+          display: flex;
+          margin-bottom: 2px;
+          padding: 5px;
+          border-bottom: none;
+          font-size: 14px;
+          line-height: 18px;
+          &:first-child {
+            padding-top: 16px;
+          }
+          &:last-child {
+            padding-bottom: 15px;
+          }
+          &::before {
+            /* display: inline-block; */
+            margin-right: 12px;
+            -webkit-box-flex: 0;
+            -ms-flex: 0 0 100px;
+            flex: 0 0 100px;
+            font-weight: 700;
+            content: attr(data-label);
+          }
+        }
+      }
     }
   }
 `;
 
 const NoFound = styled.div`
   font-family: '순천B';
-  font-size: 30px;
+  font-size: 20px;
   color: gray;
-`;
-
-const Wrapper = styled.div`
-  /* border: 3px solid red; */
-  height: 100%;
-  > table {
-    width: 100%;
-    height: 70%;
-    border-collapse: collapse;
-    border-spacing: 0;
-    table-layout: fixed;
-    text-align: center;
-    > thead {
-      background-color: lightgray;
-      margin-bottom: 10px;
-      font-size: 1rem;
-      padding: 10px;
-    }
-  }
-  > div#paging {
-    /* border: 1px dotted red; */
-    padding: 2%;
-    display: flex;
-    justify-content: space-between;
-    margin: 8px 5px 5px 0;
-    > button {
-      cursor: pointer;
-    }
+  height: 40vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 5px dotted lightgray;
+  word-break: break-all;
+  @media screen and (max-width: 480px) {
+    font-size: 17px;
   }
 `;
 
 function Post({ post }) {
-  const {
-    id,
-    title,
-    type,
-    targetPoint,
-    totalViews,
-    totalLikes,
-    activate,
-    createdAt,
-    updatedAt,
-  } = post;
+  const { id, title, type, targetPoint, activate, createdAt, updatedAt } = post;
 
-  const handleClick = (e) => {
-    e.preventDefault();
-    //게시글 이동 창.
+  const handleClick = () => {
     window.open(`/main/search/${id}`, '_blank');
   };
 
   return (
-    <PostContainer>
-      <td className="id">{id}</td>
-      <td className="type">{type === 'Free' ? '무료' : '유료'}</td>
-      <td className="type">{activate || '대기중'}</td>
-      <td onClick={handleClick} className="title">
+    <tr>
+      <td scope="row" data-label="종류">
+        {type === 'Free' ? '무료' : '유료'}
+      </td>
+      <td data-label="상태">{activate ? '공개중' : '대기중'}</td>
+      <td data-label="제목" className="title" onClick={handleClick}>
         {title}
       </td>
-      <td className="like">{totalLikes}</td>
-      <td className="point">{targetPoint}</td>
-      <td className="createdAt">{createdAt}</td>
-      <td className="updatedAt">{updatedAt}</td>
-    </PostContainer>
+      <td data-label="가격">{targetPoint}</td>
+      <td data-label="작성일자">{createdAt}</td>
+      <td data-label="수정일자">{updatedAt}</td>
+    </tr>
   );
 }
 
@@ -161,12 +207,39 @@ function MyPosts() {
   return (
     <EntireContainer>
       {postList.length === 0 ? (
-        <NoFound>작성한 게시물이 없습니다!</NoFound>
+        <NoFound>작성한 게시물이 없습니다 {':('}</NoFound>
       ) : (
         <Wrapper>
+          <Table>
+            <table>
+              <colgroup>
+                <col style={{ width: '5%' }} />
+                <col style={{ width: '5%' }} />
+                <col style={{ width: '43%' }} />
+                <col style={{ width: '7%' }} />
+                <col style={{ width: '20%' }} />
+                <col style={{ width: '20%' }} />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>종류</th>
+                  <th>상태</th>
+                  <th>제목</th>
+                  <th>가격</th>
+                  <th>작성일자</th>
+                  <th>수정일자</th>
+                </tr>
+              </thead>
+              <tbody>
+                {postList.slice(offset, offset + LIMIT).map((post) => (
+                  <Post key={post.id} post={post} />
+                ))}
+              </tbody>
+            </table>
+          </Table>
           <div id="paging">
             <button disabled={Number(page) === 1} onClick={prevBtnClick}>
-              이전
+              <FontAwesomeIcon icon={faCircleLeft} />
             </button>
             <span>
               {page} / {totalPage}
@@ -175,38 +248,9 @@ function MyPosts() {
               onClick={nextBtnClick}
               disabled={Number(page) === Number(totalPage)}
             >
-              다음
+              <FontAwesomeIcon icon={faCircleRight} />
             </button>
           </div>
-          <table>
-            <colgroup>
-              <col id="id" width="5%" />
-              <col id="type" min-width="5%" />
-              <col id="active" min-width="7%" />
-              <col id="title" width="30%" />
-              <col id="like" min-width="7%" />
-              <col id="point" min-width="7%" />
-              <col id="createdAt" width="13%" />
-              <col id="updatedAt" width="13%" />
-            </colgroup>
-            <thead>
-              <tr>
-                <th style={{ padding: '8px' }}>번호</th>
-                <th>종류</th>
-                <th>상태</th>
-                <th>제목</th>
-                <th>추천수</th>
-                <th>가격</th>
-                <th>작성일자</th>
-                <th>수정일자</th>
-              </tr>
-            </thead>
-            <tbody>
-              {postList.slice(offset, offset + LIMIT).map((post) => (
-                <Post key={post.id} post={post} />
-              ))}
-            </tbody>
-          </table>
         </Wrapper>
       )}
     </EntireContainer>

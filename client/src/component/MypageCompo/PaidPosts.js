@@ -1,85 +1,115 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
-// import Search from '../Search';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectPurchaseDetails } from '../../store/slices/purchaseDetails';
-import { selectUserInfo } from '../../store/slices/userInfo';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleRight, faCircleLeft } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 
 const EntireContainer = styled.div`
-  border-left: 5px solid orange;
-  border-right: 5px solid orange;
-  background-color: white;
-  height: 70%;
-  > div.btns {
-    text-align: center;
-    padding-top: 15px;
-    margin-bottom: 10px;
+  * {
+    /* border: 1px solid red; */
+  }
+`;
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 50vh;
+  padding: 10px;
+  > div#paging {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 20%;
+    min-width: 150px;
+    color: #821e9c;
+    font-weight: bold;
+    font-size: 1.1rem;
     > button {
-      &:nth-child(1) {
-        margin-right: 15px;
-      }
-      &:nth-child(2) {
-        margin-left: 15px;
+      cursor: pointer;
+      background: transparent;
+      border: 0;
+      color: #821e9c;
+      font-size: 1.3rem;
+      &:disabled {
+        opacity: 0;
       }
     }
   }
-  > ul.posts {
-    background-color: white;
-    /* border: 3px solid pink; */
-    margin: 0;
-    list-style: none;
-    padding-left: 0;
-    height: 100%;
-    overflow: auto;
-    padding: 1%;
-    > li.post {
-      border: 2px solid gray;
-      padding: 1%;
-      margin-bottom: 4%;
-      display: flex;
-      flex-direction: column;
-      /* flex-wrap: auto; */
-      > span.purchased-at {
-        /* flex: 1; */
-        margin-bottom: 1%;
-      }
-      > p {
-        border-top: 1px solid lightgray;
-        border-bottom: 1px solid lightgray;
-        box-shadow: 1px 1px 1px gray;
-        margin: 0;
-        width: 100%;
-        padding: 1%;
-        text-overflow: ellipsis;
-        &.title {
-          /* flex: 1; */
-          &:hover {
-            text-decoration: underline;
-            cursor: pointer;
-          }
-        }
-        &.content {
-          /* flex: 4; */
-          /* height: 5vh; */
-          word-break: normal;
-          /* white-space: normal; */
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
+`;
+
+const Table = styled.div`
+  width: 100%;
+  position: relative;
+  margin: 25px auto;
+  border-top: 2px solid #777;
+  > table {
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    thead tr th {
+      border-bottom: 1px solid #888;
+      color: #71038c;
+    }
+    tbody tr td {
+      border-bottom: 1px solid #efefef;
+      &.title {
+        word-break: break-all;
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
         }
       }
-      > div.btn-price {
-        /* flex: 1; */
-        display: flex;
-        justify-content: space-between;
-        margin-top: 1%;
-        > span {
-          &.btn {
+    }
+    thead tr th,
+    tbody tr td {
+      text-align: left;
+      padding: 10px;
+      font-size: 15px;
+      line-height: 0.9rem;
+
+      /* desktop only */
+      @media screen and (min-width: 991px) {
+        padding: 12px 20px;
+        font-size: 1rem;
+        line-height: 22px;
+      }
+    }
+
+    /* mobile only */
+    @media screen and (max-width: 680px) {
+      col {
+        width: 100% !important;
+      }
+      thead {
+        display: none;
+      }
+      tbody tr {
+        border-bottom: 1px solid #efefef;
+        td {
+          width: 100%;
+          display: flex;
+          margin-bottom: 2px;
+          padding: 5px;
+          border-bottom: none;
+          font-size: 14px;
+          line-height: 18px;
+          &:first-child {
+            padding-top: 16px;
           }
-          &.price {
-            margin-right: 3%;
+          &:last-child {
+            padding-bottom: 15px;
+          }
+          &::before {
+            /* display: inline-block; */
+            margin-right: 12px;
+            -webkit-box-flex: 0;
+            -ms-flex: 0 0 100px;
+            flex: 0 0 100px;
+            font-weight: 700;
+            content: attr(data-label);
           }
         }
       }
@@ -87,11 +117,25 @@ const EntireContainer = styled.div`
   }
 `;
 
+const NoFound = styled.div`
+  font-family: '순천B';
+  font-size: 20px;
+  color: gray;
+  height: 40vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 5px dotted lightgray;
+  word-break: break-all;
+  @media screen and (max-width: 480px) {
+    font-size: 17px;
+  }
+`;
+
 //타이틀 버튼 틀릭하면 해당 포스트로 이동
 function Post({ post }) {
   //여기서 createdAt은 구매한 날짜임.
-  const { id, title, content, targetPoint, nickname: writer, createdAt } = post;
-  const day = (createdAt && createdAt.split(' ')[0]) || '2022-05-16 05:26:45';
+  const { id, title, targetPoint, nickname: writer, createdAt } = post;
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -100,16 +144,19 @@ function Post({ post }) {
   };
 
   return (
-    <li className="post">
-      <span className="purchased-at">{day}</span>
-      <p className="title" onClick={handleClick}>
+    <tr>
+      <td scope="row" data-label="자료번호">
+        {id}
+      </td>
+      <td scope="row" data-label="구매일">
+        {createdAt}
+      </td>
+      <td data-label="제목" className="title" onClick={handleClick}>
         {title}
-      </p>
-      <div className="btn-price">
-        <span className="writer">{writer}</span>
-        <span className="price">{targetPoint} P</span>
-      </div>
-    </li>
+      </td>
+      <td data-label="작성자">{writer}</td>
+      <td data-label="가격">{targetPoint}</td>
+    </tr>
   );
 }
 
@@ -154,20 +201,54 @@ function PaidPosts() {
 
   return (
     <EntireContainer>
-      <div className="btns">
-        <button disabled={page === 1} onClick={() => setPage(page - 1)}>
-          {'<<'}
-        </button>
-        {page} / {totalPage}
-        <button disabled={page === totalPage} onClick={() => setPage(page + 1)}>
-          {'>>'}
-        </button>
-      </div>
-      <ul className="posts">
-        {paidPostList.map((post) => (
-          <Post key={post.id} post={post} />
-        ))}
-      </ul>
+      {paidPostList?.length === 0 ? (
+        <NoFound>구매한 자료가 없습니다 {':('}</NoFound>
+      ) : (
+        <Wrapper>
+          <Table>
+            <table>
+              <colgroup>
+                <col style={{ width: '10%' }} />
+                <col style={{ width: '20%' }} />
+                <col style={{ width: '50%' }} />
+                <col style={{ width: '10%' }} />
+                <col style={{ width: '10%' }} />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>자료번호</th>
+                  <th>구매일</th>
+                  <th>제목</th>
+                  <th>작성자</th>
+                  <th>가격</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paidPostList?.map((post) => (
+                  <Post key={post.id} post={post} />
+                ))}
+              </tbody>
+            </table>
+          </Table>
+          <div id="paging">
+            <button
+              disabled={Number(page) === 1}
+              onClick={() => setPage(page - 1)}
+            >
+              <FontAwesomeIcon icon={faCircleLeft} />
+            </button>
+            <span>
+              {page} / {totalPage}
+            </span>
+            <button
+              onClick={() => setPage(page + 1)}
+              disabled={Number(page) === Number(totalPage)}
+            >
+              <FontAwesomeIcon icon={faCircleRight} />
+            </button>
+          </div>
+        </Wrapper>
+      )}
     </EntireContainer>
   );
 }

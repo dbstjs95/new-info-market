@@ -31,7 +31,8 @@ const EntireContainer = styled.div`
     > input {
       width: 80%;
       padding: 5px;
-      margin: 10px 0;
+      margin: 20px 0 15px;
+      outline: none;
     }
     > button {
       padding: 5px;
@@ -49,6 +50,7 @@ const EntireContainer = styled.div`
     align-items: center;
     input,
     button {
+      outline: none;
       border: 1px solid gray;
       padding: 7px 10px;
       border-radius: 5px;
@@ -77,6 +79,7 @@ const EntireContainer = styled.div`
         }
       }
       > p.error-message {
+        padding-top: 5px;
         font-size: 0.8rem;
         word-break: break-all;
         max-width: 230px;
@@ -111,7 +114,7 @@ const EntireContainer = styled.div`
   }
   @media screen and (max-width: 600px) {
     flex-direction: column;
-    padding: 0;
+    padding: 10px;
     > div.first {
       padding: 15px 0;
       > .key {
@@ -150,8 +153,7 @@ const EntireContainer = styled.div`
 `;
 
 function UserInfoChange() {
-  const { isLogin, id, email, password, nickname, phone } =
-    useSelector(selectUserInfo);
+  const { isLogin, id, email, nickname, phone } = useSelector(selectUserInfo);
   const accToken = localStorage.getItem('act');
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -170,7 +172,7 @@ function UserInfoChange() {
     withCredentials: true,
   };
 
-  const [locked, setLocked] = useState(false);
+  const [locked, setLocked] = useState(true);
   const [pwdCheckInput, setPwdCheckInput] = useState('');
   const [inputVal, setInputVal] = useState({
     email: '',
@@ -212,8 +214,13 @@ function UserInfoChange() {
     if (e.target.name === 'email') emailCheck(e.target.value);
     if (e.target.name === 'nickname') nickNameCheck(e.target.value);
     if (e.target.name === 'phone') phoneCheck(e.target.value);
+
     if (e.target.name === 'password') pwdCheck(e.target.value);
-    if (e.target.name === 'rePwd') rePwdCheck(e.target.value);
+    if (e.target.name === 'rePwd')
+      setInputVal((prev) => ({
+        ...prev,
+        rePwd: e.target.value,
+      }));
   };
 
   //이메일 값에 따른 에러메세지 상태 변화
@@ -222,14 +229,18 @@ function UserInfoChange() {
 
     const emailRegex =
       /([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
-    if (!inputEmail) return setErrorMsg({ ...errorMsg, email: '' });
+
+    if (!inputEmail) return setErrorMsg((prev) => ({ ...prev, email: '' }));
     if (inputEmail === email)
-      return setErrorMsg({ ...errorMsg, email: '변화가 없습니다.' });
+      return setErrorMsg((prev) => ({ ...prev, email: '변화가 없습니다.' }));
     if (!emailRegex.test(inputEmail))
-      return setErrorMsg({ ...errorMsg, email: '이메일 형식으로 적어주세요.' });
+      return setErrorMsg((prev) => ({
+        ...prev,
+        email: '이메일 형식으로 적어주세요.',
+      }));
     if (!inputVal.emailAuthentication)
-      return setErrorMsg({ ...errorMsg, email: '인증해주세요.' });
-    setErrorMsg({ ...errorMsg, email: '' });
+      return setErrorMsg((prev) => ({ ...prev, email: '인증해주세요.' }));
+    setErrorMsg((prev) => ({ ...prev, email: '' }));
   };
 
   //닉네임 값에 따른 에러메세지 상태 변화
@@ -283,9 +294,8 @@ function UserInfoChange() {
 
     const pwdRegex =
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+
     if (!inputPwd) return setErrorMsg({ ...errorMsg, password: '' });
-    if (inputPwd === password)
-      return setErrorMsg({ ...errorMsg, password: '변화가 없습니다.' });
 
     if (!pwdRegex.test(inputPwd))
       return setErrorMsg({
@@ -297,20 +307,15 @@ function UserInfoChange() {
   };
 
   //비밀번호 일치여부에 따른 에러메세지 상태 변화
-  const rePwdCheck = (inputRePwd) => {
-    setInputVal({
-      ...inputVal,
-      rePwd: inputRePwd,
-    });
-
-    const { password } = inputVal;
-    if (inputRePwd && inputRePwd !== password)
-      return setErrorMsg({
-        ...errorMsg,
+  const rePwdCheck = () => {
+    const { password, rePwd } = inputVal;
+    if (rePwd && rePwd !== password)
+      return setErrorMsg((prev) => ({
+        ...prev,
         rePwd: '일치하지 않습니다.',
-      });
+      }));
 
-    setErrorMsg({ ...errorMsg, rePwd: '' });
+    setErrorMsg((prev) => ({ ...prev, rePwd: '' }));
   };
 
   //수정 버튼 활성화 조건: 에러 메세지가 안 뜨면서, 수정될 값이 있을 때만 활성화.
@@ -328,10 +333,10 @@ function UserInfoChange() {
   const isValidNickName = (e) => {
     e.preventDefault();
     if (inputVal.nickname === nickname) {
-      setErrorMsg({
-        ...errorMsg,
+      setErrorMsg((prev) => ({
+        ...prev,
         nickname: '현재 사용 중인 닉네임입니다.',
-      });
+      }));
     } else {
       axios
         .post(
@@ -341,16 +346,17 @@ function UserInfoChange() {
           },
           postConfig,
         )
-        .then((res) => {
-          setInputVal({ ...inputVal, nickNameAuthentication: true });
-          setErrorMsg({ ...errorMsg, nickname: '' });
+        .then(() => {
+          alert('사용 가능한 닉네임입니다.');
+          setInputVal((prev) => ({ ...prev, nickNameAuthentication: true }));
+          setErrorMsg((prev) => ({ ...prev, nickname: '' }));
         })
         .catch((err) => {
-          setErrorMsg({
-            ...errorMsg,
-            nickname: err.response?.message || '닉네임 변경 불가',
-          });
-          setInputVal({ ...inputVal, nickname: '' });
+          setErrorMsg((prev) => ({
+            ...prev,
+            nickname: err.response?.data?.message || '닉네임 변경 불가',
+          }));
+          setInputVal((prev) => ({ ...prev, nickname: '' }));
         });
     }
   };
@@ -426,6 +432,11 @@ function UserInfoChange() {
       .catch((err) => alert('서버 에러 발생! 다시 시도해주세요.'));
   };
 
+  // 비밀번호, 재확인 동시에
+  useEffect(() => {
+    rePwdCheck();
+  }, [inputVal.password, inputVal.rePwd]);
+
   useEffect(() => {
     if (accToken && !isLogin) return;
     if (!isLogin) navigate('/main');
@@ -480,7 +491,6 @@ function UserInfoChange() {
             </button>
           </div>
           <p className="error-message">{errorMsg.nickname}</p>
-
           <div className="input-box">
             <input
               name="phone"
@@ -515,7 +525,6 @@ function UserInfoChange() {
             disabled={locked}
             onChange={handleChange}
           />
-
           <p className="error-message">{errorMsg.rePwd}</p>
           {/* <button style={{ whiteSpace: 'nowrap' }} className="account" disabled>
             계좌 인증 하기

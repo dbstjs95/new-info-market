@@ -118,9 +118,7 @@ export default function FileChange() {
     //파일 입력 폼
     <FileUplaodBox>
       <input type="file" onChange={handleInputChange} ref={fileInput} />
-
-      {/* 원본 --> selectedFile */}
-      {!selectedFile && <span onClick={handleCancel}>파일취소</span>}
+      {selectedFile && <span onClick={handleCancel}>파일취소</span>}
     </FileUplaodBox>
   );
 }

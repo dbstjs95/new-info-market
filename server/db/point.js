@@ -105,7 +105,14 @@ async function findUserPaidbyUserId(userId) {
       "state",
       "point",
       [Sequelize.col("User.nickname"), "nickname"],
-      "createdAt",
+      [
+        Sequelize.fn(
+          "DATE_FORMAT",
+          Sequelize.col("User.createdAt"),
+          "%Y-%m-%d %H:%i:%s"
+        ),
+        "createdAt",
+      ],
       "merchant_uid",
       "imp_uid",
       "payment_method_type",

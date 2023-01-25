@@ -135,12 +135,16 @@ const EditConfirmBox = styled(LikeDownload)`
     border: 0;
     padding: 3px 7px;
     color: white;
+    cursor: pointer;
     &:first-of-type {
       margin-right: 20px;
       background-color: #777;
     }
     &:nth-of-type(2) {
       background-color: #025896;
+    }
+    &:hover {
+      box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.3);
     }
   }
 `;
@@ -293,6 +297,7 @@ function RemoveInfoConfirm() {
 }
 
 function ContentFree({ paid }) {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const {
     id: infoId,
@@ -405,53 +410,6 @@ function ContentFree({ paid }) {
     }
   };
 
-  //텍스트 수정 처리,
-  useEffect(() => {
-    if (!modifyTextStep) return;
-    axios
-      .put(
-        `${process.env.REACT_APP_SERVER_DEV_URL}/info/${infoId}`,
-        {
-          type: 'Free',
-          title: localTitle,
-          content: localContent,
-          file: modyfiedFileName,
-          targetPoint: 0,
-        },
-        postConfig,
-      )
-      .then((res) => {
-        dispatch(
-          updatePostState({
-            title: localTitle,
-            content: localContent,
-            fileURL: modyfiedFileName,
-          }),
-        );
-      })
-      .catch((err) => {
-        //실패했으면 브라우저상 변화가 반영이 안되어야 함.
-        setLocalTitle(title);
-        setLocalContent(content);
-        if (err.response.data?.message) alert(err.response.data.message);
-      });
-
-    dispatch(cancelModify());
-  }, [modifyTextStep]);
-
-  // 브라우저 창 클릭시 열린 세팅 모달 닫힘(1)
-  const handleCloseModal = useCallback(() => {
-    dispatch(updatePostState({ isOpen: false }));
-  }, [isOpen]);
-
-  // 브라우저 창 클릭시 열린 세팅 모달 닫힘(2)
-  useEffect(() => {
-    window.addEventListener('click', handleCloseModal);
-    return () => {
-      window.removeEventListener('click', handleCloseModal);
-    };
-  }, []);
-
   //텍스트, 파일 수정 단계를 분리시켜주는 코드
   const handleModifyReady = () => {
     if (!titleChange && !contentChange && !fileChange)
@@ -470,6 +428,55 @@ function ContentFree({ paid }) {
       }),
     );
   };
+
+  // 브라우저 창 클릭시 열린 세팅 모달 닫힘(1)
+  const handleCloseModal = useCallback(() => {
+    dispatch(updatePostState({ isOpen: false }));
+  }, [isOpen]);
+
+  // 브라우저 창 클릭시 열린 세팅 모달 닫힘(2)
+  useEffect(() => {
+    window.addEventListener('click', handleCloseModal);
+    return () => {
+      window.removeEventListener('click', handleCloseModal);
+    };
+  }, []);
+
+  //텍스트 수정 처리,
+  useEffect(() => {
+    if (!modifyTextStep) return;
+    axios
+      .put(
+        `${process.env.REACT_APP_SERVER_DEV_URL}/info/${infoId}`,
+        {
+          type: 'Free',
+          title: localTitle,
+          content: localContent,
+          file: modyfiedFileName,
+          targetPoint: 0,
+        },
+        postConfig,
+      )
+      .then((res) => {
+        console.log('localContent: ', localContent);
+        dispatch(
+          updatePostState({
+            title: localTitle,
+            content: localContent,
+            fileURL: modyfiedFileName,
+          }),
+        );
+        alert('수정이 완료되었습니다.');
+        navigate('');
+      })
+      .catch((err) => {
+        //실패했으면 브라우저상 변화가 반영이 안되어야 함.
+        setLocalTitle(title);
+        setLocalContent(content);
+        console.error(err?.response?.data?.message);
+      })
+      .finally(() => dispatch(cancelModify()));
+  }, [modifyTextStep]);
 
   return (
     <EntireContainer>

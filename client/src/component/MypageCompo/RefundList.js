@@ -2,16 +2,17 @@ import React from 'react';
 import styled from 'styled-components';
 
 const EntireContainer = styled.div`
-  border-left: 5px solid orange;
-  border-right: 5px solid orange;
-  background-color: white;
-  height: 500px;
+  min-height: 40vh;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   color: gray;
   font-size: 20px;
+  border: 5px dotted lightgray;
+  word-break: break-all;
+  @media screen and (max-width: 480px) {
+    font-size: 17px;
+  }
 `;
 
 function RefundList() {

@@ -74,7 +74,14 @@ async function getPayments(userId, pages, limit, state) {
       "tid",
       "userId",
       "infoId",
-      "createdAt",
+      [
+        Sequelize.fn(
+          "DATE_FORMAT",
+          Sequelize.col("Payment.createdAt"),
+          "%Y-%m-%d %H:%i:%s"
+        ),
+        "createdAt",
+      ],
     ],
     include: [
       {

@@ -121,8 +121,14 @@ async function getMyInfos(pages, limit, userId) {
       "title",
       "content",
       "userId",
-      "createdAt",
-      "updatedAt",
+      [
+        fn("DATE_FORMAT", col("Info.createdAt"), "%Y-%m-%d %H:%i:%s"),
+        "createdAt",
+      ],
+      [
+        fn("DATE_FORMAT", col("Info.updatedAt"), "%Y-%m-%d %H:%i:%s"),
+        "updatedAt",
+      ],
       "targetPoint",
       "type",
       "totalViews",
