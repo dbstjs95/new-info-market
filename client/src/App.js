@@ -50,7 +50,7 @@ function App() {
               <Route path="refundList" element={<RefundList />} />
             </Route>
             <Route path="freeWriting" element={<FreeWriting />} />
-            <Route path="salesWriting" element={<SalesWriting />} />
+            <Route path="salesWriting" element={<FreeWriting paid={true} />} />
           </Route>
           {/* <Route path="admin" element={<Admin />} />
           <Route path="*" element={<NotFoundPage />} /> */}

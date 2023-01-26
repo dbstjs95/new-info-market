@@ -6,6 +6,7 @@ import { selectUserInfo } from '../../store/slices/userInfo';
 import { useNavigate } from 'react-router-dom';
 import AWS from 'aws-sdk';
 import { v4 } from 'uuid';
+import { LoadingContainer } from '../../pages/user/Mainpage';
 
 const ACCESS_KEY = process.env.REACT_APP_AWS_ACCESS_KEY_ID;
 const SECRET_ACCESS_KEY = process.env.REACT_APP_AWS_SECRET_ACCESS_KEY;
@@ -13,36 +14,40 @@ const REGION = process.env.REACT_APP_AWS_DEFAULT_REGION;
 const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET;
 
 AWS.config.update({
+  region: REGION,
   accessKeyId: ACCESS_KEY,
   secretAccessKey: SECRET_ACCESS_KEY,
+  apiVersion: '2006-03-01',
 });
 
-const myBucket = new AWS.S3({
-  params: { Bucket: S3_BUCKET },
-  region: REGION,
-});
+export const LoadingContainer2 = styled(LoadingContainer)`
+  position: fixed;
+`;
 
 const FormContainer = styled.form`
-  /* border: 2px solid orange; */
   * {
     /* border: 1px solid red; */
   }
-  width: 100%;
+  width: 95%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: stretch;
   margin: 0 auto;
   padding: 25px;
-  /* box-shadow: inset 0 0 100px rgba(113, 6, 140, 0.5); */
-  box-shadow: inset 0 0 100px rgba(133, 115, 34, 0.5);
+  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.5);
   border-radius: 10px;
   > input#title,
-  > textarea#content {
+  > textarea#content,
+  > input#price {
+    outline: none;
     padding: 10px;
-    border: 2px solid lightgray;
+    border: 0;
     border-radius: 5px;
-    box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.2);
+    @media screen and (max-width: 600px) {
+      font-size: 0.9rem;
+    }
   }
   > input#title {
     margin-bottom: 15px;
@@ -51,6 +56,12 @@ const FormContainer = styled.form`
     min-height: 400px;
     margin-bottom: 30px;
     resize: none;
+  }
+  > input#price {
+    width: 150px;
+    padding: 5px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
   }
   > div.submit {
     display: flex;
@@ -97,6 +108,10 @@ const FileBox = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  > input {
+    font-size: 0.9rem;
+    color: #2458a6;
+  }
   > span {
     display: none;
     color: #444;
@@ -116,9 +131,10 @@ const FileBox = styled.div`
   }
 `;
 
-function FreeWriting() {
+function FreeWriting({ paid }) {
   const accToken = localStorage.getItem('act');
-  const { isLogin } = useSelector(selectUserInfo);
+  const [Loading, setLoading] = useState(false);
+  const { isLogin, grade } = useSelector(selectUserInfo);
   const navigate = useNavigate();
 
   const postConfig = {
@@ -136,6 +152,7 @@ function FreeWriting() {
   const [textValues, setTextValues] = useState({
     title: null,
     content: null,
+    targetPoint: null,
   });
 
   //업로드할 파일 입력값
@@ -144,13 +161,14 @@ function FreeWriting() {
   //업로드 버튼 클릭(파일 없이)
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { title, content } = textValues;
+    setLoading(true);
+    const { title, content, targetPoint } = textValues;
     axios
       .post(
         `${process.env.REACT_APP_SERVER_DEV_URL}/info`,
         {
-          type: 'Free',
-          targetPoint: 0,
+          type: paid ? 'Paid' : 'Free',
+          targetPoint: targetPoint || 0,
           title,
           content,
           file: '',
@@ -162,59 +180,71 @@ function FreeWriting() {
         setTextValues({
           title: '',
           content: '',
+          targetPoint: '',
         });
+        navigate('/mypage/info/myposts');
       })
       .catch((err) => {
         alert('서버 에러 발생! 다시 시도해주세요.');
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   //업로드 버튼 클릭(파일 업로드)
   const handleSubmitWithFile = (e) => {
     e.preventDefault();
-    //loading indicator 사용하기
-    const fileName = `file/${v4().toString().replaceAll('-', '')}.${
+    setLoading(true);
+    const fileName = `info/${v4().toString().replaceAll('-', '')}.${
       selectedFile.type.split('/')[1]
     }`;
 
-    const params = {
-      ACL: 'public-read-write',
-      Body: selectedFile,
-      Bucket: S3_BUCKET,
-      Key: fileName,
-    };
+    const myBucket = new AWS.S3.ManagedUpload({
+      params: {
+        Bucket: S3_BUCKET, // 버킷 이름
+        Key: fileName,
+        Body: selectedFile, // 파일 객체
+      },
+    }).promise();
 
-    myBucket.putObject(params, (err, data) => {
-      //서버로 파일 경로 보내주기.(일단 임시로 작성)
-      axios
-        .post(
-          `${process.env.REACT_APP_SERVER_DEV_URL}/info`,
-          {
-            type: 'Free',
-            targetPoint: 0,
-            ...textValues,
-            file: fileName,
-          },
-          postConfig,
-        )
-        .then((res) => {
-          setTextValues({
-            title: '',
-            content: '',
+    myBucket
+      .then(() => {
+        //서버로 파일 경로 보내기.
+        const { title, content, targetPoint } = textValues;
+        axios
+          .post(
+            `${process.env.REACT_APP_SERVER_DEV_URL}/info`,
+            {
+              type: paid ? 'Paid' : 'Free',
+              targetPoint: targetPoint || 0,
+              title,
+              content,
+              file: fileName,
+            },
+            postConfig,
+          )
+          .then((res) => {
+            fileInput.current.value = '';
+            if (res.data.infoId) alert('글이 등록되었습니다.');
+            setLoading(false);
+            navigate('/mypage/info/myposts');
+          })
+          .catch((err) => {
+            deleteFile(fileName);
+            console.error(err);
+            setLoading(false);
+            alert('파일업로드 주소가 서버에 반영 안 됨.');
           });
-          setSelectedFile('');
-          fileInput.current.value = '';
-          if (res.data.infoId) alert('글이 등록되었습니다.');
-        })
-        .catch((err) => {
-          deleteFile(fileName);
-          alert('파일업로드 주소가 서버에 반영 안 됨.');
-        });
-    });
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+        alert('파일 업로드에 실패했습니다.');
+      });
   };
 
   //파일 삭제
   const deleteFile = (fileName) => {
+    const myBucket = new AWS.S3();
     const params = {
       Bucket: S3_BUCKET,
       Key: fileName,
@@ -240,18 +270,30 @@ function FreeWriting() {
     setSelectedFile(null);
   };
 
+  const handleSubmitBtn = () =>
+    paid
+      ? textValues.title && textValues.content && textValues.targetPoint
+      : textValues.title && textValues.content;
+
   useEffect(() => {
     if (!accToken && !isLogin) return navigate('/main');
+    if (grade === 'Bronze') {
+      alert('실버 등급부터 가능합니다.');
+      navigate(-1);
+    }
   }, []);
 
   return (
     <FormContainer>
+      {Loading && (
+        <LoadingContainer2 bg={'rgba(0,0,0,0.1)'}>loading...</LoadingContainer2>
+      )}
       <input
         name="title"
         id="title"
         placeholder="제목"
         maxLength="100"
-        defaultValue={textValues.title}
+        defaultValue={textValues?.title}
         onChange={(e) =>
           setTextValues({ ...textValues, title: e.target.value })
         }
@@ -260,7 +302,7 @@ function FreeWriting() {
         name="content"
         id="content"
         placeholder="공유할 정보에 대한 간단한 설명을 적어주세요."
-        defaultValue={textValues.content}
+        defaultValue={textValues?.content}
         onChange={(e) =>
           setTextValues({ ...textValues, content: e.target.value })
         }
@@ -276,17 +318,27 @@ function FreeWriting() {
           파일 취소
         </span>
       </FileBox>
-      <div className="submit">
-        <span
-          className={
-            textValues.title && textValues.content ? 'msg' : 'msg alert'
+      {paid && (
+        <input
+          id="price"
+          name="targetPoint"
+          type="text"
+          placeholder="가격"
+          defaultValue={textValues?.targetPoint}
+          onChange={(e) =>
+            setTextValues({ ...textValues, targetPoint: e.target.value })
           }
-        >
-          제목과 내용 모두 작성해주세요.
+        />
+      )}
+      <div className="submit">
+        <span className={handleSubmitBtn() ? 'msg' : 'msg alert'}>
+          {paid
+            ? '제목, 내용, 가격 모두 작성해주세요.'
+            : '제목과 내용 모두 작성해주세요.'}
         </span>
         <button
           id="submit"
-          disabled={!textValues.title || !textValues.content}
+          disabled={!handleSubmitBtn()}
           onClick={selectedFile ? handleSubmitWithFile : handleSubmit}
         >
           작성 완료

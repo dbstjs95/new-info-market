@@ -7,14 +7,16 @@ const REGION = process.env.REACT_APP_AWS_DEFAULT_REGION;
 const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET;
 
 AWS.config.update({
+  region: REGION,
   accessKeyId: ACCESS_KEY,
   secretAccessKey: SECRET_ACCESS_KEY,
+  apiVersion: '2006-03-01',
 });
 
-const myBucket = new AWS.S3({
-  params: { Bucket: S3_BUCKET },
-  region: REGION,
-});
+// const myBucket = new AWS.S3({
+//   params: { Bucket: S3_BUCKET },
+//   region: REGION,
+// });
 
 const initialState = {
   id: null,
@@ -92,15 +94,15 @@ export const selectedPostSlice = createSlice({
       state.modifyFileStep = false;
     },
     deleteFile: (state) => {
-      const params = {
-        Bucket: S3_BUCKET,
-        Key: state.fileURL,
-      };
-
-      myBucket.deleteObject(params, (err, data) => {
-        if (data) console.log('기존 파일 삭제 성공');
-        if (err) console.log('기존 파일 삭제 실패');
-      });
+      // const myBucket = new AWS.S3();
+      // const params = {
+      //   Bucket: S3_BUCKET,
+      //   Key: state.fileName,
+      // };
+      // myBucket.deleteObject(params, (err, data) => {
+      //   if (data) console.log('s3파일 삭제');
+      //   if (err) console.log('s3파일 삭제 실패');
+      // });
     },
     init: (state) => {
       state.isOpen = false;

@@ -297,10 +297,10 @@ function SalesWriting() {
 
   useEffect(() => {
     if (!isLogin) return navigate('/main');
-    if (grade === 'Bronze') {
-      alert('실버 등급부터 가능합니다.');
-      navigate(-1);
-    }
+    // if (grade === 'Bronze') {
+    //   alert('실버 등급부터 가능합니다.');
+    //   navigate(-1);
+    // }
   }, []);
 
   return (

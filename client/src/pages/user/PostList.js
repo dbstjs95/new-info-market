@@ -59,13 +59,16 @@ const CenterBox = styled.div`
   > div.bar {
     width: 800px;
     border-radius: 10px;
-    box-shadow: 0 5px 2px rgba(0, 0, 0, 0.2);
-    background-color: #f2bd24;
+    box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.1);
+    background-color: lightgray;
     > form {
       border: 0;
       padding: 10px 5px;
       > select {
         border: 0;
+      }
+      > input {
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1);
       }
       > span#search-icon {
         color: white;
@@ -93,8 +96,6 @@ const UlContainer = styled.ul`
 `;
 
 const PostContainer = styled.li`
-  border-top: 1px solid gray;
-  border-bottom: 1px solid gray;
   width: 100%;
   padding: 2% 3%;
   background-color: white;
@@ -260,8 +261,8 @@ function PostList() {
       <CenterBox>
         <Search />
         <UlContainer className="postList">
-          {list.map((post) => {
-            return <Post key={post.id} post={post} />;
+          {list.map((post, idx) => {
+            return <Post key={idx} post={post} />;
           })}
           {list.length === 0 && <li>{msg}</li>}
         </UlContainer>

@@ -11,7 +11,6 @@ import {
   addLike,
   cancelLike,
   cancelModify,
-  deleteFile,
 } from '../../store/slices/selectedPost';
 import { selectPoint, updatePointState } from '../../store/slices/point';
 import ChargeBox, { PayWithPoints } from '../../component/ChargeBox';
@@ -21,6 +20,23 @@ import Setting from '../../component/content/Setting';
 import Modal from '../../modals/Modal-1';
 import FileChange from '../../component/content/FileChange';
 import File from '../../images/file.png';
+import AWS from 'aws-sdk';
+import { LoadingContainer2 } from '../../component/MypageCompo/FreeWriting';
+
+const ACCESS_KEY = process.env.REACT_APP_AWS_ACCESS_KEY_ID;
+const SECRET_ACCESS_KEY = process.env.REACT_APP_AWS_SECRET_ACCESS_KEY;
+const REGION = process.env.REACT_APP_AWS_DEFAULT_REGION;
+const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET;
+
+// aws 설정
+AWS.config.update({
+  region: REGION,
+  accessKeyId: ACCESS_KEY,
+  secretAccessKey: SECRET_ACCESS_KEY,
+  apiVersion: '2006-03-01',
+});
+
+const myBucket = new AWS.S3();
 
 const EntireContainer = styled.div`
   * {
@@ -251,7 +267,7 @@ const ContentEditBox = styled.textarea`
   word-break: break-all;
 `;
 
-function RemoveInfoConfirm() {
+function RemoveInfoConfirm({ fileURL, setLoading }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const accToken = localStorage.getItem('act');
@@ -265,6 +281,8 @@ function RemoveInfoConfirm() {
   };
 
   const handleInfoDelete = () => {
+    dispatch(updatePostState({ removeInfo: false }));
+    setLoading(true);
     //게시글 첨부파일도 삭제해야 함!!
     axios
       .delete(
@@ -272,13 +290,25 @@ function RemoveInfoConfirm() {
         getConfig,
       )
       .then((res) => {
-        dispatch(deleteFile());
-        alert(res.data.message);
-      })
-      .catch((err) => alert(err.response.message));
+        if (fileURL) {
+          const params = {
+            Bucket: S3_BUCKET,
+            Key: fileURL,
+          };
 
-    dispatch(updatePostState({ removeInfo: false }));
-    navigate(-1); //다시 렌더링되는지 확인
+          myBucket.deleteObject(params, (err, data) => {
+            if (data) console.log('s3파일 삭제');
+            if (err) console.log('s3파일 삭제 실패');
+          });
+        }
+        setLoading(false);
+        alert(res.data.message);
+        navigate('/main');
+      })
+      .catch((err) => {
+        setLoading(false);
+        alert(err?.response?.data?.message);
+      });
   };
 
   return (
@@ -330,6 +360,9 @@ function ContentFree({ paid }) {
   // paid version - grade, point
   const { id, isLogin, grade, point } = useSelector(selectUserInfo);
   const accToken = localStorage.getItem('act');
+
+  const [Loading, setLoading] = useState(false);
+
   const [localTitle, setLocalTitle] = useState(title);
   const [localContent, setLocalContent] = useState(content);
 
@@ -412,9 +445,7 @@ function ContentFree({ paid }) {
 
   //텍스트, 파일 수정 단계를 분리시켜주는 코드
   const handleModifyReady = () => {
-    if (!titleChange && !contentChange && !fileChange)
-      return dispatch(updatePostState({ infoEditMode: false }));
-
+    setLoading(true);
     if (fileChange)
       return dispatch(
         updatePostState({
@@ -422,11 +453,15 @@ function ContentFree({ paid }) {
         }),
       );
 
-    dispatch(
-      updatePostState({
-        modifyTextStep: true,
-      }),
-    );
+    if (titleChange || contentChange) {
+      return dispatch(
+        updatePostState({
+          modifyTextStep: true,
+        }),
+      );
+    }
+
+    return dispatch(updatePostState({ infoEditMode: false }));
   };
 
   // 브라우저 창 클릭시 열린 세팅 모달 닫힘(1)
@@ -449,37 +484,59 @@ function ContentFree({ paid }) {
       .put(
         `${process.env.REACT_APP_SERVER_DEV_URL}/info/${infoId}`,
         {
-          type: 'Free',
+          type: paid ? 'Paid' : 'Free',
           title: localTitle,
           content: localContent,
-          file: modyfiedFileName,
-          targetPoint: 0,
+          file: fileChange ? modyfiedFileName : fileURL,
+          targetPoint: paid ? targetPoint : 0,
         },
         postConfig,
       )
-      .then((res) => {
-        console.log('localContent: ', localContent);
+      .then(() => {
+        // 수정 내용이 DB에 반영되었음 --> 기존 파일이 변경되었다면 삭제하기
+        if (fileChange) {
+          const params = {
+            Bucket: S3_BUCKET,
+            Key: fileURL,
+          };
+
+          myBucket.deleteObject(params, (err, data) => {
+            if (data) console.log('s3파일 삭제');
+            if (err) console.log('s3파일 삭제 실패');
+          });
+        }
+
         dispatch(
           updatePostState({
             title: localTitle,
             content: localContent,
-            fileURL: modyfiedFileName,
+            fileURL: fileChange ? modyfiedFileName : fileURL,
           }),
         );
+
         alert('수정이 완료되었습니다.');
-        navigate('');
       })
       .catch((err) => {
         //실패했으면 브라우저상 변화가 반영이 안되어야 함.
         setLocalTitle(title);
         setLocalContent(content);
         console.error(err?.response?.data?.message);
+        alert('수정에 실패했습니다.');
       })
       .finally(() => dispatch(cancelModify()));
   }, [modifyTextStep]);
 
+  useEffect(() => {
+    if (!infoEditMode) {
+      setLoading(false);
+    }
+  }, [infoEditMode]);
+
   return (
     <EntireContainer>
+      {Loading && (
+        <LoadingContainer2 bg={'rgba(0,0,0,0.1)'}>loading...</LoadingContainer2>
+      )}
       <ContentContainer>
         {/* paid: 결제하기전 확인 단계 */}
         {paid && preStep && (
@@ -511,7 +568,9 @@ function ContentFree({ paid }) {
             handleBtnClick={() =>
               dispatch(updatePostState({ removeInfo: false }))
             }
-            content={<RemoveInfoConfirm />}
+            content={
+              <RemoveInfoConfirm fileURL={fileURL} setLoading={setLoading} />
+            }
             role="remove"
           />
         )}
@@ -602,7 +661,7 @@ function ContentFree({ paid }) {
                 <a
                   href={
                     isLogin
-                      ? `https://${process.env.REACT_APP_AWS_BUCKET}.s3.${process.env.REACT_APP_AWS_DEFAULT_REGION}.amazonaws.com/${fileURL}`
+                      ? `${process.env.REACT_APP_BUCKET_URL}${fileURL}`
                       : '#'
                   }
                 >

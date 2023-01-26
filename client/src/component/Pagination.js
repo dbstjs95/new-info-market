@@ -23,7 +23,8 @@ const PageContainer = styled.ul`
       &:hover,
       &.selected {
         color: white;
-        background-color: #4bab13;
+        /* background-color: #4bab13; */
+        background-color: #b633c4;
         border-radius: 3px;
       }
     }

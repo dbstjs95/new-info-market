@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   updatePostState,
   selectSelectedPost,
-  deleteFile,
 } from '../../store/slices/selectedPost';
 import AWS from 'aws-sdk';
 import { v4 } from 'uuid';
@@ -16,13 +15,10 @@ const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET;
 
 // aws 설정
 AWS.config.update({
+  region: REGION,
   accessKeyId: ACCESS_KEY,
   secretAccessKey: SECRET_ACCESS_KEY,
-});
-
-const myBucket = new AWS.S3({
-  params: { Bucket: S3_BUCKET },
-  region: REGION,
+  apiVersion: '2006-03-01',
 });
 
 // css
@@ -55,42 +51,44 @@ const FileUplaodBox = styled.div`
 export default function FileChange() {
   const dispatch = useDispatch();
   const { modifyFileStep, fileURL } = useSelector(selectSelectedPost);
+
   const [selectedFile, setSelectedFile] = useState('');
+
+  //파일 업로드 input
+  const fileInput = useRef(null);
 
   //파일 변경이 있을 때 s3에 새로운 파일을 올리고, 기존파일을 삭제해야 함.
   useEffect(() => {
     if (!modifyFileStep) return;
 
-    const fileName = `file/${v4().toString().replaceAll('-', '')}.${
+    const fileName = `info/${v4().toString().replaceAll('-', '')}.${
       selectedFile.type.split('/')[1]
     }`;
 
-    const putParams = {
-      ACL: 'public-read-write',
-      Body: selectedFile,
-      Bucket: S3_BUCKET,
-      Key: fileName,
-    };
+    const myBucket = new AWS.S3.ManagedUpload({
+      params: {
+        Bucket: S3_BUCKET, // 버킷 이름
+        Key: fileName,
+        Body: selectedFile, // 파일 객체
+      },
+    }).promise();
 
-    myBucket.putObject(putParams, (err, data) => {
-      console.log('err: ', err);
-      console.log('data: ', data);
-    });
-
-    if (fileURL) dispatch(deleteFile());
-
-    dispatch(
-      updatePostState({
-        modyfiedFileName: fileName,
-        modifyFileStep: false,
-        modifyTextStep: true,
-      }),
-    );
-    setSelectedFile('');
+    myBucket
+      .then(() => {
+        setSelectedFile('');
+        dispatch(
+          updatePostState({
+            modyfiedFileName: fileName,
+            modifyFileStep: false,
+            modifyTextStep: true,
+          }),
+        );
+      })
+      .catch((err) => {
+        console.error(err);
+        alert('파일 업로드에 실패했습니다.');
+      });
   }, [modifyFileStep]);
-
-  //파일 업로드 input
-  const fileInput = useRef(null);
 
   //파일 선택
   const handleInputChange = (e) => {

@@ -39,7 +39,8 @@ const EntireContainer = styled.div`
       cursor: pointer;
       z-index: 1000;
       &.open {
-        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+        background-color: white;
+        box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
         border-radius: 5px;
         &:hover {
           box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.1);

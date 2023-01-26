@@ -11,6 +11,20 @@ import third from '../../images/third.png';
 import main from '../../images/main.jpeg';
 import bulb from '../../images/bulb.jpeg';
 
+export const LoadingContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: ${({ bg }) => bg || 'white'};
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: '순천B';
+  z-index: 10000;
+`;
+
 const EntireContainer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -38,6 +52,7 @@ const EntireContainer = styled.div`
 `;
 
 const UlContainer = styled.ul`
+  position: relative;
   border: 12px solid rgba(0, 0, 0, 0.1);
   height: 600px;
   list-style: none;
@@ -171,9 +186,12 @@ function Post({ post, order }) {
   );
 }
 
-function List({ posts }) {
+function List({ posts, Loading }) {
   return (
     <UlContainer>
+      {Loading && (
+        <LoadingContainer bg={'whitesmoke'}>loading...</LoadingContainer>
+      )}
       <li id="top10_title">
         Best Info <span>TOP 10</span>
       </li>
@@ -191,6 +209,7 @@ function Mainpage() {
   const dispatch = useDispatch();
   const accToken = localStorage.getItem('act');
   const [list, setList] = useState([]);
+  const [Loading, setLoading] = useState(false);
 
   const getConfig = {
     headers: {
@@ -200,6 +219,7 @@ function Mainpage() {
   };
 
   useEffect(() => {
+    setLoading(true);
     dispatch(clearPostState());
     //인기 top 10개
     const infoURL = `${process.env.REACT_APP_SERVER_DEV_URL}/info`;
@@ -211,7 +231,8 @@ function Mainpage() {
       })
       .catch((err) => {
         if (err.response?.message) alert(err.response.message);
-      });
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   return (
@@ -219,7 +240,7 @@ function Mainpage() {
       <div className="main" />
       <div id="best_list">
         <Search />
-        <List posts={list} />
+        <List posts={list} Loading={Loading} />
       </div>
     </EntireContainer>
   );

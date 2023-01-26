@@ -53,6 +53,9 @@ const Table = styled.div`
     }
     tbody tr td {
       border-bottom: 1px solid #efefef;
+      &.private {
+        color: crimson;
+      }
       &.title {
         word-break: break-all;
         cursor: pointer;
@@ -142,7 +145,9 @@ function Post({ post }) {
       <td scope="row" data-label="종류">
         {type === 'Free' ? '무료' : '유료'}
       </td>
-      <td data-label="상태">{activate ? '공개중' : '대기중'}</td>
+      <td data-label="상태" className={activate ? '' : 'private'}>
+        {activate ? '공개중' : '대기중'}
+      </td>
       <td data-label="제목" className="title" onClick={handleClick}>
         {title}
       </td>
@@ -196,8 +201,7 @@ function MyPosts() {
         config,
       )
       .then((res) => {
-        const { rows, count } = res.data.info;
-        console.log(rows);
+        const { rows, count } = res?.data?.info;
         if (rows && rows.length > 0) setPostList([...postList, ...rows]);
         if (count && page === 1) setTotalCnt(Number(count));
       })
