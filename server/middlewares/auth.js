@@ -89,12 +89,12 @@ module.exports = {
     }
 
     const getToken = refreshToken.split("=")[1].split(";")[0];
-    console.log(getToken);
+
     jwt.verify(getToken, process.env.JWT_SECRET, async (err, decoded) => {
       if (err) {
         res.status(400).json({ message: "인증에 실패했습니다." });
       }
-      console.log(decoded);
+
       const user = await userDb.findPkUser(decoded.id);
 
       if (!user) {

@@ -60,23 +60,26 @@ module.exports = {
     // 토큰 [id(PK), grade)]생성하고 전달.
     const accToken = generateAccessToken(id, grade);
     const refreshToken = generateRefreshToken(id, grade);
-    const cookieOptions = {
-      httpOnly: true,
-    };
+    // const cookieOptions = {
+    //   httpOnly: true,
+    // };
     // console.log(refreshToken);
     // id, token, point, grade, message
-    return res
-      .cookie("refreshToken", refreshToken, cookieOptions)
-      .status(201)
-      .json({
-        id,
-        point,
-        grade,
-        nickname,
-        phone,
-        accToken: accToken,
-        message: "로그인에 성공 했습니다.",
-      });
+    return (
+      res
+        // .cookie("refreshToken", refreshToken, cookieOptions)
+        .cookie("refreshToken", refreshToken)
+        .status(201)
+        .json({
+          id,
+          point,
+          grade,
+          nickname,
+          phone,
+          accToken: accToken,
+          message: "로그인에 성공 했습니다.",
+        })
+    );
   },
   logout: async (req, res) => {
     res
