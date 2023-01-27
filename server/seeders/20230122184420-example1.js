@@ -9,7 +9,7 @@ module.exports = {
     let freeInfos = ids.map((id) => ({
       title: `무료글 테스트${id}`,
       content: `테스트${id}: Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam, velit. Ipsum nesciunt mollitia dolor quae id quaerat, modi eius eos dolore odio quisquam maxime labore dolorem voluptatibus harum aliquid voluptatem.`,
-      targetPoint: null,
+      targetPoint: 0,
       type: "Free",
       userId: 1,
       activate: 1,
