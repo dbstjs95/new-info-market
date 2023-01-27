@@ -88,21 +88,8 @@ function Outline() {
       });
   }, [updateState, clearState]);
 
-  // useEffect(() => {
-  //   if (!isLogin) handleAuth();
-  // });
-
-  // 연결확인용
   useEffect(() => {
-    console.log('연결확인용2');
-    const url = `${process.env.REACT_APP_SERVER_DEV_URL}`;
-    axios
-      .get(url)
-      .then((res) => console.log(res.data))
-      .catch((err) => {
-        console.log('????');
-        console.error(err);
-      });
+    if (!isLogin) handleAuth();
   });
 
   return (
