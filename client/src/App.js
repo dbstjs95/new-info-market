@@ -7,7 +7,6 @@ import Signup from './pages/Signup';
 import Home from './pages/user/Home';
 import SideBar from './component/MypageCompo/SideBar';
 import FreeWriting from './component/MypageCompo/FreeWriting';
-import SalesWriting from './component/MypageCompo/SalesWriting';
 import MyPosts from './component/MypageCompo/MyPosts';
 import PaidPosts from './component/MypageCompo/PaidPosts';
 import ChargedPointList from './component/MypageCompo/ChargedPointList';

@@ -1,7 +1,6 @@
 import React from 'react';
 import Img2 from '../../images/img2.png';
 import Img3 from '../../images/img3.jpg';
-import '../../css/Home.css';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import homeLast from '../../images/homeLast.jpeg';

@@ -9,7 +9,6 @@ import {
   modifyComment,
 } from '../../store/slices/selectedPost';
 import axios from 'axios';
-import '../../css/Comment.css';
 
 const RegisterBox = styled.div`
   display: flex;

@@ -5,8 +5,6 @@ import React, {
   forwardRef,
 } from 'react';
 import fileUploadService from '../../utils/fileUploadService';
-import { useSelector } from 'react-redux';
-import { selectUserInfo } from '../../store/slices/userInfo';
 
 const UploadFiles = forwardRef((props, ref) => {
   const accToken = localStorage.getItem('act');

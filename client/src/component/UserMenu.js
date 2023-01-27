@@ -8,40 +8,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearState, selectUserInfo } from '../store/slices/userInfo';
 import axios from 'axios';
 
-const EntireContainer = styled.ul`
-  /* border: 1px solid black;
-  li {
-    border: 1px solid red;
-  } */
-  /* position: relative;
-  > ul.login-signup-btn {
-    display: inline-flex;
-    > li.login-btn {
-      margin-right: 15px;
-    }
-  }
-  > ul.popup {
-    z-index: 1000;
-    background-color: #fff;
-    position: absolute;
-    top: calc(100% + 25px);
-    right: -10px;
-    border: 1px solid #ebebeb;
-    box-shadow: var(--box-shadow);
-    border-radius: 5px 0 5px 5px;
-    overflow: hidden;
-    > li {
-      padding: 15px 19px;
-      font-family: var(--noto-sans);
-      white-space: nowrap;
-      &:hover {
-        background-color: #f4f4f4;
-        cursor: pointer;
-      }
-    }
-  } */
-`;
-
 const IconContainer = styled.div`
   position: relative;
   padding-right: 10px;
@@ -126,7 +92,6 @@ function UserMenu() {
   };
 
   return (
-    // <EntireContainer className="userMenu">
     <>
       {isLogin ? (
         <IconContainer>

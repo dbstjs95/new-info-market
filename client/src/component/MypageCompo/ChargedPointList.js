@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleRight, faCircleLeft } from '@fortawesome/free-solid-svg-icons';
-import { faMoneyCheckDollar } from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from 'react-redux';
 import { selectUserInfo } from '../../store/slices/userInfo';
 import axios from 'axios';
