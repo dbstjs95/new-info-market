@@ -67,11 +67,11 @@ const EntireContainer = styled.ul`
   padding: 30px 15px;
   height: 800px;
   overflow-y: scroll;
-  -ms-overflow-style: none; /* 인터넷 익스플로러 */
-  scrollbar-width: none; /* 파이어폭스 */
-  &::-webkit-scrollbar {
-    display: none; /* 크롬, 사파리, 오페라, 엣지 */
-  }
+  //-ms-overflow-style: none; /* 인터넷 익스플로러 */
+  //scrollbar-width: none; /* 파이어폭스 */
+  //&::-webkit-scrollbar {
+  //  display: none; /* 크롬, 사파리, 오페라, 엣지 */
+  //}
   > li.post {
     box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.3);
     background-color: #f9fae3;
@@ -261,7 +261,8 @@ function FreeBoard({ paid }) {
   };
 
   const handleScroll = (e) => {
-    if (e.target.clientHeight + e.target.scrollTop === e.target.scrollHeight)
+    let total = Math.ceil(e.target.clientHeight + e.target.scrollTop);
+    if (total === e.target.scrollHeight)
       setPagingInfo((prev) => ({ ...prev, page: prev.page + 1 }));
   };
 

@@ -131,7 +131,7 @@ const FileBox = styled.div`
   }
 `;
 
-function FreeWriting({ paid }) {
+function FreeWriting({ paid = false }) {
   const accToken = localStorage.getItem('act');
   const [Loading, setLoading] = useState(false);
   const { isLogin, grade } = useSelector(selectUserInfo);
@@ -277,11 +277,11 @@ function FreeWriting({ paid }) {
 
   useEffect(() => {
     if (!accToken && !isLogin) return navigate('/main');
-    if (grade === 'Bronze') {
+    if (paid && grade === 'Bronze') {
       alert('실버 등급부터 가능합니다.');
       navigate(-1);
     }
-  }, []);
+  }, [paid]);
 
   return (
     <FormContainer>
